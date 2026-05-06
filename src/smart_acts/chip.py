@@ -89,6 +89,7 @@ def get_acts():
     return (
         find_activity("mod_waf", "GLO", "OS database"),
         find_activity("market_circ_logic_no_waf", "GLO", "OS database"),
+        find_activity("market_circ_memory_no_waf", "GLO", "OS database"),
         agb.findTechAct("market group for electricity, medium voltage", "GLO")
     )
 
@@ -115,8 +116,14 @@ def chip_smart_activity(activity, param_name, db):
 
     acts = get_acts()
 
+    if "type" in data:
+        ind_type= 2 if data["type"] == "memory" else 1
+    else:
+        print(f"Chip type not explictely given for {param_name}, defaulting to logic")
+        ind_type = 1
+
     a1 = (acts[0], die_area*n_chips)
-    a2 = (acts[1], pack_weight*n_chips)
-    a3 = (acts[2], waffer_elec*n_chips)
+    a2 = (acts[ind_type], pack_weight*n_chips)
+    a3 = (acts[3], waffer_elec*n_chips)
 
     return [a1, a2, a3]
