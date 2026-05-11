@@ -17,8 +17,10 @@ def find_activity(activity_name, location, custom_db):
     except Exception:
         pass
 
-    return agb.findBioAct(activity_name)
-
+    try:
+        return agb.findBioAct(activity_name)
+    except Exception:
+        raise ValueError(f"Activity not found: {activity_name} at {location}")
 
 def get_param_type(value):
     if isinstance(value, bool):
