@@ -36,5 +36,8 @@ def stoch_impacts(ref_flow, impacts, db):
     # If there is no time saved by fixing them beforehand,
     # we could also just remove the columns 
     unused = find_unused_params(ref_flow[0], db)
-    problem, params, Y = agb.stats._stochastics(ref_flow[0], impacts, **unused)
+
+    total_ref_flow = agb.newActivity(db,f"act_fg_stoch",  "unit", exchanges={x: 1 for x in ref_flow[0]})
+
+    problem, params, Y = agb.stats._stochastics(total_ref_flow, impacts, **unused)
     return Y

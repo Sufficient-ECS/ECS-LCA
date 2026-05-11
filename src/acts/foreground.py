@@ -7,7 +7,7 @@ from src.smart_acts import smart_activity
 from src.utils.utils import get_param, find_activity
 
 def process_fground(fground, foreground_db, name):
-    ret, rep = {}, {}
+    ret, rep = [], {}
 
     if "inputs" in fground:
         fground = fground["inputs"]
@@ -28,7 +28,7 @@ def process_fground(fground, foreground_db, name):
                                 "unit",
                                 exchanges=exchs,
                                 act_id_name = new_activity_name)
-            ret[act]=1
+            ret.append(act)
         except Exception as e:
             print(f"Error creating activity '{new_activity_name}': {e}")
     return ret, rep
@@ -40,6 +40,5 @@ def get_reference_flow(path, db):
 
     exchanges_foreground, rep = process_fground(fground, db, Path(path).stem)
 
-    ref_flow = agb.newActivity(db,f"act_{Path(path).stem}",  "unit", exchanges=exchanges_foreground)
-    return ref_flow, rep
+    return exchanges_foreground, rep
 
