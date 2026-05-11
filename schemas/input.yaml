@@ -3,7 +3,11 @@ required:
   - amount
 properties:
   act_name:
-    $ref: ./all_activities_enum.yaml
+    oneOf:
+      - $ref: ./all_activities_enum.yaml
+      - type: array
+        items:
+          $ref: ./all_activities_enum.yaml
   location:
     $ref: ./geographies.yaml
   amount:

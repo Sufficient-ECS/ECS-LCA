@@ -30,17 +30,13 @@ def input_to_activity(param_name, input_value, db):
     param = get_param(param_name, input_value["amount"])
 
     # Resolve mapping
-    ei_name = input_value["act_name"]
+    ei_names = input_value["act_name"]
     location = input_value.get("location", "GLO")
 
-    # Find background activity
-    activity = find_activity(ei_name, location, db)
+    if not isinstance(ei_names, list):
+        ei_names = [ei_names]
 
-    if activity is None:
-        raise ValueError(
-            f"Background activity not found: {ei_name} ({location})"
-        )
-    return [(activity, param)]
+    return [(find_activity(ei_name, location, db), param) for ei_name in ei_names]
 
 def create_custom_activities(activities, foreground_db):
     inputs, updates = [],[]
