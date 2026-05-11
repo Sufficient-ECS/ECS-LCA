@@ -1,5 +1,5 @@
 import lca_algebraic as agb
-import brightway2 as bw
+import bw2data as bd
 import yaml as yml
 import os
 import hashlib
@@ -73,7 +73,7 @@ def get_param(name,amount):
         print(f"Error creating parameter '{param_name}': {e}")
 
 def export_all_db_as_enum(path):
-    all_names = sorted({key['name'] for db_name in bw.databases for key in bw.Database(db_name)})
+    all_names = sorted({key['name'] for db_name in bd.databases for key in bd.Database(db_name)})
 
     with open(path, "w", encoding="utf-8") as f:
         yml.dump({"enum": all_names}, f, allow_unicode=True, sort_keys=False)

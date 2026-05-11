@@ -1,5 +1,4 @@
-lca-algebraic==1.2
-numpy<2
+lca_algebraic_bw25
 ipykernel
 jupyter
 maxent_disaggregation

@@ -1,12 +1,12 @@
-import brightway2 as bw
 import bw2io
+import bw2data as bd
 
 def setup_ecoinvent_database(eia):
-    if any(f"ecoinvent-{eia.version}-{eia.system_model}" in key for key in bw.databases.keys()):
+    if any(f"ecoinvent-{eia.version}-{eia.system_model}" in key for key in bd.databases.keys()):
         return
     if  eia.version != "None" and eia.system_model != "None":
         if eia.path != "None":
-            eicut = bw.SingleOutputEcospold2Importer(eia.path, f"ecoinvent-{eia.version}-{eia.system_model}")
+            eicut = bw2io.SingleOutputEcospold2Importer(eia.path, f"ecoinvent-{eia.version}-{eia.system_model}")
             eicut.apply_strategies()
             eicut.statistics()
             eicut.write_database()    
