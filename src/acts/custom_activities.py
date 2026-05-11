@@ -4,6 +4,7 @@ from src.smart_acts import smart_activity
 
 from pathlib import Path
 import lca_algebraic as agb
+import re
 import yaml
 
 def load_custom_activities(yaml_path):
@@ -69,8 +70,7 @@ def add_all_exchanges(all_acts, foreground_db):
         exchanges = {}
 
         for input_name, input_value in input_data.items():
-            param_name = f"{act['name']}_{input_name}".replace(" ", "_")
-
+            param_name = re.sub(r"[ \-\(\)?]", "_", f"{act['name']}_{input_name}")
             for child_act, param in input_to_activity(param_name, input_value, foreground_db):
                 #Need to do the get in case where multiple inputs link to the same activity
                 exchanges[child_act] =  exchanges.get(child_act,0) + param
