@@ -3,7 +3,7 @@
 import os
 import click
 import re
-import brightway2 as bw
+import bw2data as bd
 
 CONFIG_FILE = "src/ei_access/__init__.py"
 
@@ -60,7 +60,7 @@ def reset_brightway_project():
     click.echo("\n🔄 Resetting Brightway project...")
 
 
-    bw.projects.delete_project(name='ECS-LCA', delete_dir=True)
+    bd.projects.delete_project(name='ECS-LCA', delete_dir=True)
 
     OS_database = "OS database"
 
