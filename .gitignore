@@ -3,6 +3,8 @@ results
 Pipfile
 Pipfile.lock
 
+src/ei_access/__init__.py
+
 yaml
 uv.lock
 
