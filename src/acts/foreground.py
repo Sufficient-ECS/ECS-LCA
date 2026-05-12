@@ -1,5 +1,6 @@
 import lca_algebraic as agb
 from pathlib import Path
+import re
 import yaml as yml
 
 from src.acts.custom_activities import input_to_activity
@@ -14,8 +15,9 @@ def process_fground(fground, foreground_db, name):
 
     for input_name, input_value in fground.items():
 
-        new_activity_name = f"_{name}_{input_name}"
-        
+        new_activity_name = f"fg_{name}_{input_name}"
+        new_activity_name = re.sub(r"[ \-\(\)?]", "_", new_activity_name)
+
         rep[new_activity_name] = {}
         for i in input_value:
             if i[:2] == "c_":
