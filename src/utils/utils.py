@@ -57,13 +57,16 @@ def get_param(name,amount):
                 return agb.unit_registry.Quantity(amount["value"], amount['unit'])
 
             distrib = unc.get("distribution", "FIXED").upper()
+
+            fac = amount["value"]/100 if unc.get("relative_vals", False) else 1
+
             return agb.newFloatParam(
                 param_name,
                 default=amount["value"],
                 unit=amount["unit"],
-                min=unc.get("min"),
-                max=unc.get("max"),
-                std=unc.get("std"),
+                min=unc.get("min") * fac if unc.get("min") is not None else None,
+                max=unc.get("max") * fac if unc.get("max") is not None else None,
+                std=unc.get("std") * fac if unc.get("std") is not None else None,
                 distrib=getattr(agb.DistributionType, distrib, None),
             )
         else:

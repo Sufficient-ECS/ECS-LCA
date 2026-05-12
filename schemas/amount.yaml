@@ -25,3 +25,5 @@ properties:
         type: number
       max:
         type: number
+      relative_vals:
+        type: boolean
