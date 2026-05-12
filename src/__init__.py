@@ -16,11 +16,6 @@ def setup_project(custom_act_path, project_name, db):
     agb.resetDb(db)
     agb.resetParams()   
     agb.setForeground(db) #Create one database where all custom and modified activities will be added.
-    if 'biosphere3' not in bd.databases.keys():
-        #Content of bw2.setup() function but with overwrite=True
-        bi.create_default_biosphere3()
-        bi.create_default_lcia_methods(overwrite=True)
-        bi.create_core_migrations()
     setup_ecoinvent_database(ei_acc)
     generate_activities(custom_act_path, db)
     if folder_changed("yaml/custom", "results/.snapshot"):
