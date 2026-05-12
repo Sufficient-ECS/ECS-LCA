@@ -3,7 +3,7 @@ import sympy
 from functools import lru_cache
 from src.utils.utils import find_activity, get_param, unit_trans
 
-def die_area_pred(package_data, p_area):
+def die_area_pred(package_data, p_area, param_name):
     # Return predicted die area in mm² based on package size.
     # https://anncollin.github.io/DieAreaPrediction/
 
@@ -23,7 +23,15 @@ def die_area_pred(package_data, p_area):
 
     result = a * p_area.to("mm²")**beta
 
-    return agb.unit_registry("mm²") * result.magnitude
+    uncertainty = agb.newFloatParam(
+            f"{param_name}_da_perr",
+            default=1,
+            unit="mm²",
+            std=0.3,
+            distrib="lognormal",
+        )
+
+    return result.magnitude * uncertainty
 
 def pack_weight_pred(data, d_area):
     # Temporary factor from Augustin Wattiez based on OSSDA dataset
@@ -103,7 +111,7 @@ def chip_smart_activity(activity, param_name, db):
     if die_area != None:
         die_area = get_param(f"{param_name}_die_area", die_area)
     else:
-        die_area = die_area_pred(data["package"], pack_area)
+        die_area = die_area_pred(data["package"], pack_area, param_name)
 
     if pack_weight != None:
         pack_weight = get_param(f"{param_name}_pack_weight", pack_weight)
