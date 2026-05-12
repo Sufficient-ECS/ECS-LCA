@@ -6,6 +6,7 @@ import yaml as yml
 from src.acts.custom_activities import input_to_activity
 from src.smart_acts import smart_activity
 from src.utils.utils import get_param, find_activity
+from src import OS_database
 
 def process_fground(fground, foreground_db, name):
     ret, rep = [], {}
@@ -35,12 +36,12 @@ def process_fground(fground, foreground_db, name):
             print(f"Error creating activity '{new_activity_name}': {e}")
     return ret, rep
 
-def get_reference_flow(path, db):
+def get_reference_flow(path):
 
     with open(path, "r") as f:
         fground = yml.safe_load(f)
 
-    exchanges_foreground, rep = process_fground(fground, db, Path(path).stem)
+    exchanges_foreground, rep = process_fground(fground, OS_database, Path(path).stem)
 
     return exchanges_foreground, rep
 
