@@ -1,19 +1,42 @@
 enum:
   - mg
+  - milligram
   - g
+  - gram
   - kg
+  - kilogram
   - mm
+  - millimeter
   - cm
+  - centimeter
   - m
+  - meter
   - km
+  - kilometer
   - mm²
+  - "square millimeter"
   - cm²
+  - "square centimeter"
   - m²
+  - "square meter"
   - km²
   - mm³
   - cm³
   - m³
   - km³
+  - s
+  - second
+  - h
+  - hour
+  - "person mm"
+  - "person km"
+  - "kg m"
+  - "kg km"
+  - "kilogram meter"
+  - "kg km"
+  - "kilogram kilometer"
+  - "ton km"
+  - "ton kilometer"
   - Wh
   - kWh
   - unit
