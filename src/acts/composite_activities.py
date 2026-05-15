@@ -86,4 +86,4 @@ def composite_activity(param_name, input_value, db):
             total["unit"],
             exchanges=exchanges,
     )
-    return activity, param
+    return [(activity, param)]
