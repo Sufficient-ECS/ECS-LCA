@@ -65,7 +65,7 @@ def reset_brightway_project():
     OS_database = "OS database"
 
     from src import setup_project
-    setup_project("yaml/custom", 'ECS-LCA', OS_database)
+    setup_project("yaml/custom", 'ECS-LCA')
 
     click.echo("✅ Project successfully rebuilt.\n")
 
