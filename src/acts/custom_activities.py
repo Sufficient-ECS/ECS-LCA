@@ -6,11 +6,13 @@ from pathlib import Path
 import lca_algebraic as agb
 import re
 import yaml
+import logging
 
 def load_custom_activities(yaml_path):
     activities = []
 
     for file in Path(yaml_path).rglob("*.yaml"):
+        logging.debug(f"Loading {file}")
         with open(file, "r") as f:
             data = yaml.safe_load(f)
             if data == None:
@@ -48,6 +50,8 @@ def create_custom_activities(activities, foreground_db):
                 foreground_db
             )
             act = agb.activity.copyActivity(foreground_db, to_copy, code= activity['id'])
+            logging.debug(f"Modified activity {activity['source_act']['act_name']} at {activity['source_act']['location']}\
+ copied with code {activity['id']}")
         else:
             # Create new custom activity
             act = agb.newActivity(
@@ -57,6 +61,7 @@ def create_custom_activities(activities, foreground_db):
                 unit = activity["output"]["amount"]["unit"],
                 exchanges={}
             )
+            logging.debug(f"Activity {activity['id']} created")
         inputs.append((act,activity.get("inputs", {})))
         updates.append((act,activity.get("to_update", {})))
     return inputs, updates
@@ -66,7 +71,10 @@ def add_all_exchanges(all_acts, foreground_db):
         exchanges = {}
 
         for input_name, input_value in input_data.items():
-            param_name = re.sub(r"[ \-\(\)?]", "_", f"{act['name']}_{input_name}")
+            param_name = re.sub(r"[ \-\(\)?+-]", "_", f"{act['name']}_{input_name}")
+
+            logging.debug(f"Treating {param_name}")
+
             for child_act, param in input_to_activity(param_name, input_value, foreground_db):
                 #Need to do the get in case where multiple inputs link to the same activity
                 exchanges[child_act] =  exchanges.get(child_act,0) + param
@@ -86,7 +94,15 @@ def update_all_exchanges(all_acts, foreground_db):
         act.updateExchanges(exchanges)
 
 def generate_activities(path, db):
+
+    logging.debug("Loading custom activities in memory")
     custom_activities = load_custom_activities(path)
+
+    logging.debug("Create custom activities")
     inputs, updates = create_custom_activities(custom_activities, foreground_db=db)
+
+    logging.debug("Adding exchange to all activities")
     add_all_exchanges(inputs, foreground_db=db)
+
+    logging.debug("Updating all echances for modified activities")
     update_all_exchanges(updates, foreground_db=db)

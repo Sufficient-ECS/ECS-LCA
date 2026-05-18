@@ -4,6 +4,7 @@ import yaml as yml
 import os
 import hashlib
 from functools import lru_cache
+import logging
 
 @lru_cache(maxsize=None)
 def find_activity(activity_name, location, custom_db):
@@ -20,7 +21,7 @@ def find_activity(activity_name, location, custom_db):
     try:
         return agb.findBioAct(activity_name)
     except Exception:
-        raise ValueError(f"Activity not found: {activity_name} at {location}")
+        raise ValueError(f"Activity not found: {activity_name} at {location} (custom_db = {custom_db})")
 
 def get_param_type(value):
     if isinstance(value, bool):
@@ -73,7 +74,7 @@ def get_param(name,amount):
             raise ValueError(f"Unsupported parameter type: {param_type}")
         
     except Exception as e:
-        print(f"Error creating parameter '{param_name}': {e}")
+        logging.WARNING(f"Error creating parameter '{param_name}': {e}")
 
 def export_all_db_as_enum(path):
     all_names = sorted({key['name'] for db_name in bd.databases for key in bd.Database(db_name)})

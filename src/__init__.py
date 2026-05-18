@@ -1,6 +1,7 @@
 import bw2data as bd
 import bw2io as bi
 import lca_algebraic as agb
+import logging
 
 from src.ei_access import EI_Access
 from src.ei_access.setup import setup_ecoinvent_database
@@ -18,7 +19,11 @@ def setup_project(custom_act_path, project_name):
     agb.resetDb(OS_database)
     agb.resetParams()   
     agb.setForeground(OS_database) #Create one database where all custom and modified activities will be added.
+    
+    logging.debug("Setup ecoinvent")
     setup_ecoinvent_database(ei_acc)
+
+    logging.debug("Setup OS database")
     generate_activities(custom_act_path, OS_database)
     if folder_changed("yaml/custom", "results/.snapshot"):
         export_all_db_as_enum("schemas/all_activities_enum.yaml")

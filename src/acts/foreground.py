@@ -33,7 +33,7 @@ def process_fground(fground, foreground_db, name):
                                 act_id_name = new_activity_name)
             ret.append(act)
         except Exception as e:
-            print(f"Error creating activity '{new_activity_name}': {e}")
+            raise ValueError(f"Error creating activity '{new_activity_name}': {e}")
     return ret, rep
 
 def get_reference_flow(path):

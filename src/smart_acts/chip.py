@@ -2,6 +2,7 @@ import lca_algebraic as agb
 import sympy
 from functools import lru_cache
 from src.utils.utils import find_activity, get_param, unit_trans
+import logging
 
 def die_area_pred(package_data, p_area, param_name):
     # Return predicted die area in mm² based on package size.
@@ -84,7 +85,7 @@ def waf_elec_int(d_tech):
         return 2.76 * agb.unit_registry("kWh/cm²")#Ecoinvent default value
 
     if d_tech not in param_type_int:
-        print(f"Technology node {d_tech} not supported, using default Ecoinvent value")
+        logging.warning(f"Technology node {d_tech} not supported, using default Ecoinvent value")
         return 2.76 * agb.unit_registry("kWh/cm²")
 
     return param_type_int[d_tech] * agb.unit_registry("kWh/cm²")
@@ -129,7 +130,7 @@ def chip_smart_activity(activity, param_name, db):
     if "type" in data:
         ind_type= 2 if data["type"] == "memory" else 1
     else:
-        print(f"Chip type not explictely given for {param_name}, defaulting to logic")
+        logging.WARNING(f"Chip type not explictely given for {param_name}, defaulting to logic")
         ind_type = 1
 
     a1 = (acts[0], die_area*n_chips)
