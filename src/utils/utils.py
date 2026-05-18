@@ -5,6 +5,7 @@ import os
 import hashlib
 from functools import lru_cache
 import logging
+import re
 
 @lru_cache(maxsize=None)
 def find_activity(activity_name, location, custom_db):
@@ -126,3 +127,6 @@ def folder_changed(folder: str, state_file: str) -> bool:
 
 def unit_trans(base_unit, new_unit):
     return (1 *  agb.unit_registry(base_unit)).to(new_unit).magnitude
+
+def act_name_sanit(name):
+    return re.sub(r"[ \-\(\)?+-]", "_", name)

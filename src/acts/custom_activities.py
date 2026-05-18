@@ -1,10 +1,9 @@
 from src.acts.composite_activities import composite_activity
-from src.utils.utils import find_activity, get_param
+from src.utils.utils import find_activity, get_param, act_name_sanit
 from src.smart_acts import smart_activity
 
 from pathlib import Path
 import lca_algebraic as agb
-import re
 import yaml
 import logging
 
@@ -71,7 +70,7 @@ def add_all_exchanges(all_acts, foreground_db):
         exchanges = {}
 
         for input_name, input_value in input_data.items():
-            param_name = re.sub(r"[ \-\(\)?+-]", "_", f"{act['name']}_{input_name}")
+            param_name = act_name_sanit(f"{act['name']}_{input_name}")
 
             logging.debug(f"Treating {param_name}")
 
