@@ -14,6 +14,15 @@ agb.unit_registry.auto_scale = True
 OS_database = "OS_database"
 
 def setup_project(custom_act_path, project_name):
+    setup_project_ei(project_name)
+
+    logging.debug("Setup OS database")
+    generate_activities(custom_act_path, OS_database)
+    if folder_changed("yaml/custom", "results/.snapshot"):
+        export_all_db_as_enum("schemas/all_activities_enum.yaml")
+
+
+def setup_project_ei(project_name):
     ei_acc = EI_Access()
     bd.projects.set_current(project_name) # Set the current project, can be any name
     agb.resetDb(OS_database)
@@ -22,8 +31,3 @@ def setup_project(custom_act_path, project_name):
     
     logging.debug("Setup ecoinvent")
     setup_ecoinvent_database(ei_acc)
-
-    logging.debug("Setup OS database")
-    generate_activities(custom_act_path, OS_database)
-    if folder_changed("yaml/custom", "results/.snapshot"):
-        export_all_db_as_enum("schemas/all_activities_enum.yaml")
