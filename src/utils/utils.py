@@ -8,11 +8,12 @@ import logging
 import re
 
 @lru_cache(maxsize=None)
-def find_activity(activity_name, location, custom_db):
-    try:
-        return agb.findActivity(activity_name, db_name=custom_db)
-    except Exception:
-        pass
+def find_activity(activity_name, location, custom_db=None):
+    if custom_db != None:
+        try:
+            return agb.findActivity(activity_name, db_name=custom_db)
+        except Exception:
+            pass
 
     try:
         return agb.findTechAct(activity_name, loc=location)
