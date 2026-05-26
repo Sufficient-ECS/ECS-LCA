@@ -5,3 +5,5 @@ properties:
     $ref: ./all_activities_enum.yaml
   location:
     $ref: ./geographies.yaml
+  ref_prod:
+    type: string

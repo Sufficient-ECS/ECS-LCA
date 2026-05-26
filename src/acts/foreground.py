@@ -4,7 +4,7 @@ import yaml as yml
 
 from src.acts.custom_activities import input_to_activity
 from src.smart_acts import smart_activity
-from src.utils.utils import get_param, find_activity, act_name_sanit
+from src.utils.utils import get_param, act_name_sanit
 from src import OS_database
 
 def process_fground(fground, foreground_db, name):

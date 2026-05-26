@@ -33,11 +33,12 @@ def input_to_activity(param_name, input_value, db):
     # Resolve mapping
     ei_names = input_value["act_name"]
     location = input_value.get("location", "GLO")
+    ref_prod = input_value.get("ref_prod", None)
 
     if not isinstance(ei_names, list):
         ei_names = [ei_names]
 
-    return [(find_activity(ei_name, location, db), param) for ei_name in ei_names]
+    return [(find_activity(ei_name, location, ref_prod, db), param) for ei_name in ei_names]
 
 def create_custom_activities(activities, foreground_db):
     inputs, updates = [],[]
@@ -45,7 +46,8 @@ def create_custom_activities(activities, foreground_db):
         if "source_act" in activity:
             to_copy = find_activity(
                 activity["source_act"]["act_name"],
-                activity["source_act"]["location"],
+                activity["source_act"].get("location", "GLO"),
+                activity["source_act"].get("ref_prod", None),
                 foreground_db
             )
             act = agb.activity.copyActivity(foreground_db, to_copy, code= activity['id'])

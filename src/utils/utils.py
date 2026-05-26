@@ -8,7 +8,7 @@ import logging
 import re
 
 @lru_cache(maxsize=None)
-def find_activity(activity_name, location, custom_db=None):
+def find_activity(activity_name, location, ref_prod = None, custom_db = None):
     if custom_db != None:
         try:
             return agb.findActivity(activity_name, db_name=custom_db)
@@ -16,12 +16,14 @@ def find_activity(activity_name, location, custom_db=None):
             pass
 
     try:
-        return agb.findTechAct(activity_name, loc=location)
-    except Exception:
-        pass
+        return agb.findTechAct(activity_name, loc=location, reference_product=ref_prod)
+    except Exception as e:
+            if str(e).startswith("Several activity found in"):
+                logging.warning("Please add a reference product to eliminate uncertainty")
+                raise e
 
     try:
-        return agb.findBioAct(activity_name)
+        return agb.findBioAct(activity_name, loc=location, reference_product=ref_prod)
     except Exception:
         raise ValueError(f"Activity not found: {activity_name} at {location} (custom_db = {custom_db})")
 

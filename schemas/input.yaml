@@ -10,5 +10,7 @@ properties:
           $ref: ./all_activities_enum.yaml
   location:
     $ref: ./geographies.yaml
+  reference_product:
+    type: string
   amount:
     $ref: ./amount.yaml

@@ -73,9 +73,10 @@ def composite_activity(param_name, input_value, db):
         agb.params._param_registry()[full_name] = param_comp
         ei_name = element["act_name"]
         location = element.get("location", "GLO")
+        ref_prod = element.get("ref_prod", None)
 
         # Find background activity
-        activity = find_activity(ei_name, location, db)
+        activity = find_activity(ei_name, location, ref_prod, db)
         exchanges[activity] = param_comp.with_unit()
 
     param_comp.lock()

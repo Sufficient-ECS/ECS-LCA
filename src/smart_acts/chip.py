@@ -98,9 +98,9 @@ def get_acts():
     from src import OS_database
     # import can't be moved to the start of the file because of circular import
     return (
-        find_activity("mod_waf", "GLO", OS_database),
-        find_activity("market_circ_logic_no_waf", "GLO", OS_database),
-        find_activity("market_circ_memory_no_waf", "GLO", OS_database),
+        find_activity("mod_waf", "GLO", custom_db=OS_database),
+        find_activity("market_circ_logic_no_waf", "GLO", custom_db=OS_database),
+        find_activity("market_circ_memory_no_waf", "GLO", custom_db=OS_database),
         agb.findTechAct("market group for electricity, medium voltage", "GLO")
     )
 
