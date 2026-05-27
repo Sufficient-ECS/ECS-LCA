@@ -8,7 +8,14 @@ import logging
 import re
 
 @lru_cache(maxsize=None)
-def find_activity(activity_name, location, ref_prod = None, custom_db = None):
+def find_activity(activity_name, location, ref_prod = None, ef_cat = None, custom_db = None):
+    if ef_cat != None:
+        # Should be an elementary flow
+        try:
+            return agb.findBioAct(activity_name, loc=location, categories=ef_cat)
+        except:
+            raise ValueError(f"No elementary flow found in biosphere for {activity_name} {ef_cat} at {location}")
+
     if custom_db != None:
         try:
             return agb.findActivity(activity_name, db_name=custom_db)
@@ -18,13 +25,17 @@ def find_activity(activity_name, location, ref_prod = None, custom_db = None):
     try:
         return agb.findTechAct(activity_name, loc=location, reference_product=ref_prod)
     except Exception as e:
-            if str(e).startswith("Several activity found in"):
-                logging.warning("Please add a reference product to eliminate uncertainty")
-                raise e
+        if str(e).startswith("Several activity found in"):
+            logging.warning("Please add a reference product to eliminate uncertainty")
+            raise e
 
+    # We already know this has failed, just check if user should have passed a category
     try:
-        return agb.findBioAct(activity_name, loc=location, reference_product=ref_prod)
-    except Exception:
+        return agb.findBioAct(activity_name, loc=location)
+    except Exception as e:
+        if str(e).startswith("Several activity found in"):
+            logging.warning("Please add a category to your elementary flow")
+            raise e
         raise ValueError(f"Activity not found: {activity_name} at {location} (custom_db = {custom_db})")
 
 def get_param_type(value):

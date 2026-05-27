@@ -12,5 +12,12 @@ properties:
     $ref: ./geographies.yaml
   reference_product:
     type: string
+  ef_cat:
+    oneOf:
+      - type: string
+      - type: array
+        maxItems: 2
+        items:
+          type: string
   amount:
     $ref: ./amount.yaml

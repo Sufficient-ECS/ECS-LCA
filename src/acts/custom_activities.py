@@ -30,15 +30,23 @@ def input_to_activity(param_name, input_value, db):
     
     param = get_param(param_name, input_value["amount"])
 
+    ef_cat = input_value.get("ef_cat", None)
+
     # Resolve mapping
     ei_names = input_value["act_name"]
-    location = input_value.get("location", "GLO")
+    location = input_value.get("location", "GLO" if ef_cat == None else None)
     ref_prod = input_value.get("ref_prod", None)
+
+    if ef_cat != None:
+        if not isinstance(ef_cat,list):
+            ef_cat = (ef_cat,)
+        else:
+            ef_cat = tuple(ef_cat)
 
     if not isinstance(ei_names, list):
         ei_names = [ei_names]
 
-    return [(find_activity(ei_name, location, ref_prod, db), param) for ei_name in ei_names]
+    return [(find_activity(ei_name, location, ref_prod, ef_cat, db), param) for ei_name in ei_names]
 
 def create_custom_activities(activities, foreground_db):
     inputs, updates = [],[]
@@ -48,7 +56,7 @@ def create_custom_activities(activities, foreground_db):
                 activity["source_act"]["act_name"],
                 activity["source_act"].get("location", "GLO"),
                 activity["source_act"].get("ref_prod", None),
-                foreground_db
+                custom_db=foreground_db
             )
             act = agb.activity.copyActivity(foreground_db, to_copy, code= activity['id'])
             logging.debug(f"Modified activity {activity['source_act']['act_name']} at {activity['source_act']['location']}\
