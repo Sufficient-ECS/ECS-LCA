@@ -93,12 +93,17 @@ def add_all_exchanges(all_acts, foreground_db):
 def update_all_exchanges(all_acts, foreground_db):
     for act, update_data in all_acts:
         exchanges = {}
-        for ex_name, ex_value in update_data.items():
-            param_name = f"{act['name']}_{ex_name}"
-
-            param = get_param(param_name, ex_value["amount"])
+        for key, data in update_data.items():
+            param_name = f"{act['name']}_{key}"
+            param = get_param(param_name, data["amount"])
             #Need to do the get in case where multiple inputs link to the same activity
-            exchanges[ex_name] =  param
+            try:
+                if "location" in data:
+                    exchanges[f"{data['ex_name']}#{data['location']}"] =  param
+                else:
+                    exchanges[f"{data['ex_name']}"] =  param
+            except Exception as e:
+                raise ValueError(f"Error occurred while updating exchange for activity {act}: {e}")
 
         act.updateExchanges(exchanges)
 

@@ -5,11 +5,13 @@ source_act:
   location: GLO
 
 to_update:
-  wafer, fabricated, for integrated circuit:
+  E1:
+    ex_name: wafer, fabricated, for integrated circuit
     amount:
       value: 0
       unit: m²
-  gold:
+  E2:
+    ex_name: gold
     amount:
       value: 0
       unit: kg

@@ -5,7 +5,8 @@ source_act:
   location: GLO
 
 to_update:
-  integrated circuit, logic type:
+  E1:
+    ex_name: integrated circuit, logic type
     amount:
       value: 0
       unit: kg

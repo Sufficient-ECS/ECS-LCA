@@ -5,7 +5,8 @@ source_act:
   location: GLO
 
 to_update:
-  electricity, medium voltage:
+  E1:
+    ex_name: electricity, medium voltage
     amount:
       value: 0
       unit: kWh
