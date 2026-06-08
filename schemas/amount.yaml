@@ -17,7 +17,7 @@ properties:
         enum:
           - normal
           - lognormal
-          - triangular
+          - triangle
           - uniform
       std:
         type: number
