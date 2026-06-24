@@ -71,7 +71,11 @@ def read_input_file(file_path):
 @click.option("--unit", required=False, help="Column for unit")
 @click.option("--act_name", required=False, help="Column for activity name")
 @click.option("--loc", required=False, help="Column for location")
-def main(input_file, output_file, key, value, unit, act_name, loc):
+@click.option("--dmin", required=False, help="Column for minimum of uncertainty")
+@click.option("--dmax", required=False, help="Column for maximum of uncertainty")
+@click.option("--dstd", required=False, help="Column for std of uncertainty")
+@click.option("--distrib", required=False, help="Column for distribution of uncertainty")
+def main(input_file, output_file, key, value, unit, act_name, loc, dmin, dmax, dstd, distrib):
     df = read_input_file(input_file)
 
     product_name = Path(input_file).stem
@@ -118,6 +122,27 @@ def main(input_file, output_file, key, value, unit, act_name, loc):
                 should_comment = True
             else:
                 entry["location"] = l
+
+        if distrib or dmin or dmax or dstd:
+            entry["uncertainty"] = {}
+
+        if distrib:
+            l = row.get(distrib)
+            if not pd.isna(l):
+                entry["uncertainty"]["distribution"] = l
+
+        if dmin:
+            l = row.get(dmin)
+            if not pd.isna(l):
+                entry["uncertainty"]["min"] = l
+        if dmax:
+            l = row.get(dmax)
+            if not pd.isna(l):
+                entry["uncertainty"]["max"] = l
+        if dstd:
+            l = row.get(dstd)
+            if not pd.isna(l):
+                entry["uncertainty"]["std"] = l
 
         # Store
         if should_comment:
