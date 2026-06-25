@@ -144,3 +144,13 @@ def unit_trans(base_unit, new_unit):
 
 def act_name_sanit(name):
     return re.sub(r"[ \-\(\)?+-]", "_", name)
+
+def set_logging_level(n=2):
+    level = logging.WARNING  # default
+    if n == 1:
+        level = logging.INFO
+    elif n >= 2:
+        level = logging.DEBUG
+
+    logging.basicConfig(level=level)
+    logging.getLogger("peewee").setLevel(logging.WARNING)  # or INFO if you prefer
