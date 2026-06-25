@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schemas/modified_activity.yaml
+
+source_act:
+  act_name: integrated circuit production, memory type
+  location: GLO
+
+to_update:
+  wafer:
+    ex_name: wafer, fabricated, for integrated circuit
+    amount:
+      value: 0
+      unit: m²
+  gold:
+    ex_name: gold
+    amount:
+      value: 2.1
+      unit: g
+
+

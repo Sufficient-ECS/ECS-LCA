@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../../schemas/modified_activity.yaml
+
+source_act:
+  act_name: market for integrated circuit, memory type
+  location: GLO
+
+to_update:
+  E1:
+    ex_name: integrated circuit, memory type
+    amount:
+      value: 0
+      unit: kg
+    
+inputs:
+  circuit:
+    act_name: int_circ_prod_memory_no_waf
+    amount:
+      value: 1
+      unit: kg
+
+
