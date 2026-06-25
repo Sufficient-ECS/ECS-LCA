@@ -73,9 +73,9 @@ def composite_activity(param_name, input_value, db):
         agb.params._param_registry()[full_name] = param_comp
         ei_name = element["act_name"]
         
-        ef_cat = input_value.get("ef_cat", None)
+        ef_cat = element.get("ef_cat", None)
 
-        location = input_value.get("location", "GLO" if ef_cat == None else None)
+        location = element.get("location", "GLO" if ef_cat == None else None)
         ref_prod = element.get("ref_prod", None)
 
         if ef_cat != None:
