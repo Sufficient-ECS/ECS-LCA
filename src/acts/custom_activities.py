@@ -22,6 +22,8 @@ def load_custom_activities(yaml_path):
     return activities
 
 def input_to_activity(param_name, input_value, db):
+    if input_value is None:
+        raise ValueError(f"Input '{param_name}' has no value defined in YAML (parsed as None). Check for a missing or malformed entry.")
     if "type" in input_value:
         return smart_activity(input_value, param_name, db)
 
@@ -76,11 +78,14 @@ def create_custom_activities(activities, foreground_db):
     return inputs, updates
 
 def add_all_exchanges(all_acts, foreground_db):
+
     for act, input_data in all_acts:
         exchanges = {}
 
         for input_name, input_value in input_data.items():
             param_name = act_name_sanit(f"{act['name']}_{input_name}")
+            if input_value is None:
+                raise ValueError(f"Input '{input_name}' in activity '{act['name']}' is None — check your YAML for a missing definition.")
 
             logging.debug(f"Treating {param_name}")
 
