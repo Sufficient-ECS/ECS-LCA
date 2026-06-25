@@ -6,6 +6,25 @@ import hashlib
 from functools import lru_cache
 import logging
 import re
+import ast
+
+def load_tuple_file(filename, sep="|"):
+    """
+    Reads a file and returns a list of (str, str) tuples.
+    Returns [] if file does not exist.
+    """
+    result = []
+    try:
+        
+        with open(filename, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:  # skip empty lines
+                    result.append(ast.literal_eval(line))
+    except FileNotFoundError:
+        return []
+
+    return result
 
 @lru_cache(maxsize=None)
 def find_activity(activity_name, location, ref_prod = None, ef_cat = None, custom_db = None):
