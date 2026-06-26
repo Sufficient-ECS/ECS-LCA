@@ -4,10 +4,13 @@ import urwid
 import bw2data as bd
 from src import setup_project_ei
 from src.utils.utils import load_tuple_file
+import os
 
 setup_project_ei("ECS-LCA")
 rows = list(bd.methods)
-check = set(load_tuple_file("method_list.txt", sep=','))
+
+os.makedirs("results/", exist_ok=True)
+check = set(load_tuple_file("results/method_list.txt", sep=','))
 
 def save_tuple_set(data_set, filename, sep="|"):
     """
@@ -87,7 +90,7 @@ class MenuApp:
 
     def handle_input(self, key):
         if key in ("q", "Q"):
-            save_tuple_set(check, "method_list.txt")
+            save_tuple_set(check, "results/method_list.txt")
             raise urwid.ExitMainLoop()
 
         if key == "backspace" and self.history:

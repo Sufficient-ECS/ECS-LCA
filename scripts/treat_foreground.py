@@ -13,7 +13,7 @@ from scripts.method_selector import MenuApp
 @click.command()
 @click.argument("input_files", nargs=-1, type=click.Path(exists=True))
 @click.option("-o", "--output_folder", default="./results", help="Output folder for results")
-@click.option("-m", "--method_file", default="./results", help="Output folder for results")
+@click.option("-m", "--method_file", default="./results/method_list.txt", help="Output folder for results")
 @click.option("-v", "--verbose", count=True, help="Increase verbosity (-v, -vv, -vvv)")
 def run_lca(input_files, output_folder, method_file, verbose):
     """
