@@ -25,7 +25,6 @@ def on_checkbox_change(checkbox, state, ud):
         check.add(ud)
     else:
         check.discard(ud)
-
 class MenuApp:
     def __init__(self):
         self.history = []
@@ -39,6 +38,34 @@ class MenuApp:
             unhandled_input=self.handle_input,
         )
 
+    def treat_node(self, rows, x, n, prefix = ""):
+        if len(x)-1 == n: # This is (not) the end            
+            cb = urwid.CheckBox(
+                prefix + x[n],
+                state=tuple(x) in check,
+            )
+            urwid.connect_signal(cb, 'change', on_checkbox_change, user_arg=tuple(x))
+            return cb
+        else:
+            next_level = [list(i)  for i in rows if i[n] == x[n]]
+            
+            if len(next_level) == 1:
+                return self.treat_node(next_level, next_level[0], n+1, prefix = f"{prefix + x[n]} -- ")
+            
+            button = urwid.Button(prefix + x[n])
+            urwid.connect_signal(
+                button,
+                "click",
+                self.open_submenu,
+                [n+1, next_level]
+            )
+
+            return urwid.AttrMap(
+                    button,
+                    None,
+                    focus_map="reversed",
+                )
+
     def build_menu(self, data):
         n, rows = data
         
@@ -51,35 +78,11 @@ class MenuApp:
         drawn = set()
         for x in rows:
             x = list(x)
-            if len(x) > n+1:
-                if x[n] in drawn:
-                    continue
-                drawn.add(x[n])
-                button = urwid.Button(x[n])
-                urwid.connect_signal(
-                    button,
-                    "click",
-                    self.open_submenu,
-                    [n+1, [list(i)  for i in rows if i[n] == x[n]]]
-                )
-
-                widgets.append(
-                    urwid.AttrMap(
-                        button,
-                        None,
-                        focus_map="reversed",
-                    )
-                )
-
-            else:
-                cb = urwid.CheckBox(
-                    x[n],
-                    state=tuple(x) in check,
-                    #user_data=tuple(x)
-                )
-                urwid.connect_signal(cb, 'change', on_checkbox_change, user_arg=tuple(x))
-                widgets.append(cb)
-
+            if x[n] in drawn:
+                continue
+            drawn.add(x[n])
+            cb = self.treat_node(rows, x, n)
+            widgets.append(cb)
         return urwid.ListBox(
             urwid.SimpleFocusListWalker(widgets)
         )
