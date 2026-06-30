@@ -42,6 +42,11 @@ class MenuApp:
     def build_menu(self, data):
         n, rows = data
         
+        labels = set([i[n] for i in rows])
+        while len(labels) == 1 and len(rows) > 1:
+            n += 1
+            labels = set([i[n] for i in rows])
+
         widgets = []
         drawn = set()
         for x in rows:
