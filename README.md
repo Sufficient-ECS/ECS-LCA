@@ -48,5 +48,21 @@ pipenv run jupyter notebook main.ipynb
 - `src` contains the custom python packages.
 
 # Contact
+- david.bol@uclouvain.be
 - robin.dethienne@uclouvain.be
 - augustin.wattiez@uclouvain.be
+
+
+# Credits
+
+This project has been developped by the ECS group in the ICTEAM ([Institute of Information and Communication Technologies, Electronics and Applied Mathematics](https://www.uclouvain.be/en/research-institutes/icteam)) at UCLouvain. 
+
+<img src="./image/UCLouvain.png" alt="EECONE logo" width="250">
+
+This work was supported by the EECONE project funded by the Chips Joint Undertaking under grant agreement 101112065.
+
+<img src="./image/EECONE_LOGO_VECTOR-01.png" alt="EECONE logo" width="150">
+
+This project has received funding from the European Union’s Horizon Europe EIC Pathfinder Challenges programme under GA N°101161251 (DESIRE4EU).
+
+<img src="./image/DESIRE4EU.png" alt="DESIRE4EU logo" width="150">
