@@ -2,7 +2,7 @@
 > Please be aware that this is still a work in progress.
 > Breaking changes are to be expected in the future.
 # ECS-LCA
-This repository contains the framework used by the ECS group at ICTeam in UCLouvain.
+ECS-LCA is a life-cycle assessment framework that uses LCA-algebraic and Brightway with human-readable syntax files.
 ![Figure representing the database and processing structure](./image/figure_notebook_structure.png)
 
 # Installation
