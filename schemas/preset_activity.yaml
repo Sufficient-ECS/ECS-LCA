@@ -4,3 +4,9 @@ oneOf:
         const: chip
       data:
         $ref: ./chip.yaml
+        
+  - properties:
+      type:
+        const: pcb
+      data:
+        $ref: ./pcb.yaml

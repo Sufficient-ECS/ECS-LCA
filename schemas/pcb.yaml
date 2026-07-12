@@ -1,0 +1,66 @@
+required:
+  - area
+  - copper_layer
+  - connectors
+
+properties:
+
+  area:
+    $ref: ./amount.yaml
+
+  copper_layer:
+    type: object
+    required:
+      - thickness
+      - density
+      - number
+
+    properties:
+      thickness:
+        $ref: ./amount.yaml
+
+      density:
+        $ref: ./amount.yaml
+
+      number:
+        $ref: ./amount.yaml
+
+
+  connectors:
+    type: object
+    required:
+      - thickness
+      - gold_fingers
+      - circular_connectors
+
+    properties:
+
+      thickness:
+        $ref: ./amount.yaml
+
+      gold_fingers:
+        type: object
+        required:
+          - unit_area
+          - number
+
+        properties:
+          unit_area:
+            $ref: ./amount.yaml
+
+          number:
+            $ref: ./amount.yaml
+
+
+      circular_connectors:
+        type: object
+        required:
+          - unit_area
+          - number
+
+        properties:
+          unit_area:
+            $ref: ./amount.yaml
+
+          number:
+            $ref: ./amount.yaml
