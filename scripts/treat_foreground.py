@@ -8,7 +8,6 @@ from src.utils.utils import set_logging_level, load_tuple_file
 from src.acts.foreground import get_reference_flow
 from src.impacts.contribution import compute_impacts
 from src.impacts.monte_carlo import stoch_impacts
-from scripts.method_selector import MenuApp
 
 @click.command()
 @click.argument("input_files", nargs=-1, type=click.Path(exists=True))

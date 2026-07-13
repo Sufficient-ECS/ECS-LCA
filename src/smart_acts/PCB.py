@@ -1,5 +1,4 @@
 import lca_algebraic as agb
-import sympy
 from functools import lru_cache
 from src.utils.utils import find_activity, get_param
 

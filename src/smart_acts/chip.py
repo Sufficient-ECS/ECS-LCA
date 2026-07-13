@@ -1,7 +1,6 @@
 import lca_algebraic as agb
-import sympy
 from functools import lru_cache
-from src.utils.utils import find_activity, get_param, unit_trans
+from src.utils.utils import find_activity, get_param
 import logging
 
 def die_area_pred(package_data, p_area, param_name):
