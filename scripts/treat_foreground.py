@@ -11,10 +11,17 @@ from src.impacts.monte_carlo import stoch_impacts
 
 @click.command()
 @click.argument("input_files", nargs=-1, type=click.Path(exists=True))
+@click.option(
+    "-c",
+    "--cdb_path",
+    multiple=True,
+    type=click.Path(exists=True),
+    help="Custom database paths. Can be given multiple times.",
+)
 @click.option("-o", "--output_folder", default="./results", help="Output folder for results")
 @click.option("-m", "--method_file", default="./results/method_list.txt", help="Output folder for results")
 @click.option("-v", "--verbose", count=True, help="Increase verbosity (-v, -vv, -vvv)")
-def run_lca(input_files, output_folder, method_file, verbose):
+def run_lca(input_files, cdb_path, output_folder, method_file, verbose):
     """
     Run LCA impacts on one or multiple YAML foreground files.
     """
@@ -24,7 +31,7 @@ def run_lca(input_files, output_folder, method_file, verbose):
         raise click.UsageError("You must provide at least one input file.")
 
     # Setup project
-    setup_project("yaml/custom", 'ECS-LCA')
+    setup_project(cdb_path, 'ECS-LCA')
     if not os.path.isfile(method_file):
         raise ValueError("Selected method file does not exist. Please run method_selector.py to generate one.")
     meth = load_tuple_file(method_file, sep=',')
