@@ -130,7 +130,7 @@ def chip_smart_activity(activity, param_name, db):
     if "type" in data:
         ind_type= 2 if data["type"] == "memory" else 1
     else:
-        logging.WARNING(f"Chip type not explictely given for {param_name}, defaulting to logic")
+        logging.warning(f"Chip type not explictely given for {param_name}, defaulting to logic")
         ind_type = 1
 
     a1 = (acts[0], die_area*n_chips)
