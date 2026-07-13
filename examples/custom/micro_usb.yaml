@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=../../schemas/custom_activity.yaml
+
+output:
+  product: raw_data_CGM_project_final
+  amount:
+    value: 1
+    unit: unit
+
+inputs:
+
+  USB metal:
+    amount:
+      value: 193
+      unit: g
+    composition:
+      zinc:
+        act_name: market for zinc
+        value: 100
+        unit: g
+        uncertainty:
+          std: 5
+      alu:
+        act_name: market for aluminium, cast alloy
+      iron:
+        act_name: market for pig iron
+        location: RoW
+      steel:
+        act_name: market for steel, chromium steel 18/8
+
+  USB housing (LCP-GF30):
+    amount:
+      value: 27
+      unit: g
+    act_name: market for polyphenylene sulfide
+
+  USB Yellow Brass 66% Unplated:
+    amount:
+      value: 10
+      unit: g
+    act_name: market for brass
+    location: RoW
+  USB gold_plating_cobalt:
+    amount:
+      value: 0.01
+      unit: µg
+    act_name: market for cobalt
+
+  USB gold_plating_nickel:
+    amount:
+      value: 0.001
+      unit: µg
+    act_name: market for nickel, class 1
+
+  USB gold_plating_gold:
+    amount:
+      value: 5
+      unit: µg
+    act_name: market for gold
+
+  USB palladium:
+    amount:
+      value: 4
+      unit: µg
+    act_name: market for palladium
+
+  USB nickel:
+    amount:
+      value: 1
+      unit: µg
+    act_name: market for nickel, class 1
+
+  USB nickel_plating_nickel:
+    amount:
+      value: 49
+      unit: µg
+    act_name: market for nickel, class 1
+

@@ -42,10 +42,18 @@ pipenv run python -m ./scripts/manage_database.py
 pipenv run jupyter notebook main.ipynb
 ```
 
-# Repo structure
-- `main.ipynb` is the notebook from which users can do their LCA.
-- `yaml` contains all data describing the foreground. Enter your custom databases in this folder, under custom.
-- `src` contains the custom python packages.
+# Example
+
+The folder `example` contains an inventory which calls custom activities. To compute the related impacts, you can run the following command to choose impacts categories you want to compute:
+```
+./scripts/method_selector.py
+```
+and then compute impacts, which will be found in files `./results/foreground_impacts.csv` and `./results/foreground_stochastic.csv`:
+```
+./scripts/treat_foreground.py ./examples/foreground.yaml -c ./examples/custom 
+```
+
+Alternatively, `main.ipynb` provides an example of how to use the framework from your own python code.
 
 # Contact
 - david.bol@uclouvain.be

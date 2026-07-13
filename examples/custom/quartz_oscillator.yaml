@@ -1,0 +1,156 @@
+# yaml-language-server: $schema=../../schemas/custom_activity.yaml
+
+output:
+  product: Quartz Oscillator
+  amount:
+    value: 1
+    unit: m²
+
+inputs:
+  quartz base Alumina:
+    amount:
+      value: 737.8
+      unit: g
+    act_name: market for aluminium oxide, metallurgical
+    location: RoW
+
+  quartz base Silica:
+    amount:
+      value: 24.8
+      unit: g
+    act_name: market for activated silica
+
+  quartz base Titanium oxide:
+    amount:
+      value: 4.6
+      unit: g
+    act_name: market for titanium dioxide
+    location: RoW
+
+  quartz base Magnesia:
+    amount:
+      value: 4.4
+      unit: g
+    act_name: market for magnesium oxide
+
+  quartz base Calcia:
+    amount:
+      value: 4.2
+      unit: g
+    act_name: market for quicklime, in pieces, loose
+    location: RoW
+
+  quartz base Chromium oxide:
+    amount:
+      value: 44.2
+      unit: g
+    act_name: market for chromium trioxide, flakes
+
+  quartz base Tungsten:
+    amount:
+      value: 160.2
+      unit: g
+    act_name: market for tungsten concentrate
+
+  quartz base Molybdenum:
+    amount:
+      value: 5
+      unit: g
+    act_name: market for molybdenum
+
+  quartz base Silver:
+    amount:
+      value: 68
+      unit: g
+    act_name: market for silver
+
+  quartz base Copper:
+    amount:
+      value: 26.4
+      unit: g
+    act_name: market for copper, anode
+
+  quartz base Iron:
+    amount:
+      value: 201.8
+      unit: g
+    act_name: market for iron pellet
+
+  quartz base Nickel:
+    amount:
+      value: 40.4
+      unit: g
+    act_name: market for nickel, class 1
+
+  quartz base Cobalt:
+    amount:
+      value: 13.4
+      unit: g
+    act_name: market for cobalt
+
+  quartz base Gold:
+    amount:
+      value: 9.8
+      unit: g
+    act_name: market for gold
+
+  quartz cover Iron:
+    amount:
+      value: 369.2
+      unit: g
+    act_name: market for iron pellet
+
+  quartz cover Nickel:
+    amount:
+      value: 200.6
+      unit: g
+    act_name: market for nickel, class 1
+
+  quartz cover Cobalt:
+    amount:
+      value: 117.6
+      unit: g
+    act_name: market for cobalt
+
+  quartz cover Manganese:
+    amount:
+      value: 3.4
+      unit: g
+    act_name: market for manganese
+
+  quartz cover Silicon:
+    amount:
+      value: 1.4
+      unit: g
+    act_name: market for silicon, metallurgical grade
+
+  quartz cover Carbon:
+    amount:
+      value: 0.2
+      unit: g
+    act_name: market for carbon black
+
+  quartz crystal blank Silica:
+    amount:
+      value: 81.8
+      unit: g
+    act_name: market for activated silica
+
+  quartz silver silver:
+    amount:
+      value: 7.6
+      unit: g
+    act_name: market for silver
+
+  quartz silver chromium:
+    amount:
+      value: 0.2
+      unit: g
+    act_name: market for chromium
+
+  quartz adhesive silver:
+    amount:
+      value: 15.2
+      unit: g
+    act_name: market for silver
+

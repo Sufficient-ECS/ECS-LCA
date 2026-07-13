@@ -1,0 +1,112 @@
+# yaml-language-server: $schema=../schemas/foreground.yaml
+
+AFE:
+  # Die only, using eco invent scaling between
+  # die area and package weight.
+  type: chip
+  data:
+    type: logic
+    die:
+      area:
+        value: 10
+        unit: mm²
+    package:
+      type: BGA
+
+SoC:
+  # If only package area is given, die area
+  # is guessed based on it.
+  type: chip
+  data:
+    type: logic
+    package:
+      type: BGA
+      area:
+        value: 2
+        unit: cm²
+        uncertainty:
+          distribution: triangle
+          min: 95
+          max: 105
+          # Relative_vals leads to values
+          # 95 * value and 105 * value
+          relative_vals: true
+
+
+PMU:
+  # Package weight can be explicitely given
+  # to avoid eco invent scaling
+  type: chip
+  data:
+    type: logic
+    die:
+      area:
+        value: 15
+        unit: mm²
+    package:
+      weight:
+        value: 5
+        unit: mg
+      type: BGA
+# custom
+ 
+oscillator:
+  act_name: quartz_oscillator
+  amount:
+    value: 8
+    unit: mm²
+    uncertainty:
+      distribution: lognormal
+      std: 2 # same unit as value
+
+ 
+micro usb plug:
+  act_name: micro_usb
+  # You can go see the corresponding activity for an
+  # exemple of composite uncertainty
+  amount:
+    value: 1
+    unit: unit
+    
+ 
+ 
+capa:
+  act_name: market for capacitor, for surface-mounting
+  amount:
+    value: 5
+    unit: g
+
+PCB:
+  type: pcb
+  data:
+    area:
+      value: 15
+      unit: cm²
+    copper_layer:
+      thickness:
+        value: 8.705357
+        unit: µm
+      density:
+        value: 1
+        unit: unit
+      number:
+        value: 4
+        unit: unit
+    connectors:
+      thickness:
+        value: 1
+        unit: µm
+      gold_fingers:
+        unit_area:
+          value: 10 
+          unit: mm²
+        number:
+          value: 50
+          unit: unit
+      circular_connectors:
+        unit_area:
+          value: 5
+          unit: mm²
+        number:
+          value: 200
+          unit: unit
