@@ -1,8 +1,7 @@
 import lca_algebraic as agb
 import sympy
 from functools import lru_cache
-from src.utils.utils import find_activity, get_param, unit_trans
-import logging
+from src.utils.utils import find_activity, get_param
 
 def PCB_smart_activity(activity, param_name, db):
 
@@ -23,15 +22,9 @@ def PCB_smart_activity(activity, param_name, db):
     
     acts = get_acts()
 
-    #the total must give something in m³
-    a0 = (acts[0], pcb_area*copper_layer_thickness*copper_layer_density*copper_layer_number*8960*agb.unit_registry("kg/m³")) #à séparer pour les unités / The standard density of pure copper at room temperature is 8960 kg/m³
-    #a0 = (acts[0], pcb_area*copper_layer_density*copper_layer_number*8960*agb.unit_registry("kg/m³")) #à séparer pour les unités / The standard density of pure copper at room temperature is 8960 kg/m³
-    a1 = (acts[1], (unit_area_gold_fingers*number_gold_fingers + unit_area_circular_connectors*number_circular_connectors)*thickness*19320*agb.unit_registry("kg/m³")) #The density of pure gold is 19320 kg/m³
+    a0 = (acts[0], pcb_area*copper_layer_thickness*copper_layer_density*copper_layer_number*8960*agb.unit_registry("kg/m³")) 
+    a1 = (acts[1], (unit_area_gold_fingers*number_gold_fingers + unit_area_circular_connectors*number_circular_connectors)*thickness*19320*agb.unit_registry("kg/m³"))
     a2 = (acts[2], pcb_area)
-
-    print(a0)
-    print(a1)
-    print(a2)
 
     return [a0, a1, a2]
 
@@ -44,5 +37,4 @@ def get_acts():
         agb.findTechAct("market for copper, cathode", "GLO"),
         agb.findTechAct("market for gold", "GLO"),
         find_activity("pcb_no_copper_no_gold", "GLO", custom_db=OS_database),
-        #agb.findTechAct("market for printed wiring board, for through-hole mounting, Pb containing surface", "GLO"),
     )

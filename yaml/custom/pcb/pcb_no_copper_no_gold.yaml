@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../../schemas/modified_activity.yaml
+
+source_act:
+  act_name: printed wiring board production, for surface mounting, Pb free surface
+  location: GLO
+
+to_update:  
+  E1:
+    ex_name: copper, cathode
+    amount:
+      value: 0
+      unit: kg
+  E2:
+    ex_name: gold
+    amount:
+      value: 0
+      unit: kg      

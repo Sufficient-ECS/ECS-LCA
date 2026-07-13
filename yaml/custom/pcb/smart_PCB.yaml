@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=../../../schemas/custom_activity.yaml
+
+output:
+  product: smart_PCB
+  amount:
+    value: 1
+    unit: unit
+
+inputs:
+
+  smart_pcb:  
+    type: pcb
+    data: 
+      area:
+        value: 15
+        unit: cm²
+
+      copper_layer: 
+        thickness: 
+          value: 0.00008705357
+          unit: m
+        density:
+          value: 1
+          unit: unit
+        number: 
+          value: 4
+          unit: unit
+
+      connectors: 
+        thickness:
+          value: 0.000001
+          unit: m
+        gold_fingers:
+          unit_area:
+            value: 10 # DUMMY
+            unit: mm²
+          number:
+            value: 50
+            unit: unit 
+        circular_connectors: 
+          unit_area:
+            value: 5 
+            unit: mm²
+          number:
+            value: 200
+            unit: unit
+
