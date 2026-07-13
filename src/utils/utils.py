@@ -74,6 +74,10 @@ def get_param(name,amount):
         Returns the parameter for the given amount
         amount MUST have a value and a unit field
     """
+
+    if amount == None:
+        return None
+
     param_type = get_param_type(amount["value"]).strip().lower()
     param_name = f"{name}_{amount['unit']}"
     param_name = param_name.translate(str.maketrans(
