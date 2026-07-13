@@ -114,7 +114,7 @@ def update_all_exchanges(all_acts, foreground_db):
 
 def generate_activities(path, db):
 
-    logging.debug("Loading custom activities in memory")
+    logging.debug(f"Loading custom activities from {path} in memory")
     custom_activities = load_custom_activities(path)
 
     logging.debug("Create custom activities")
