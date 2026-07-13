@@ -5,7 +5,6 @@ Pipfile.lock
 
 src/ei_access/__init__.py
 
-yaml
 uv.lock
 
 # Byte-compiled / optimized / DLL files
