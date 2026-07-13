@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../schemas/modified_activity.yaml
+# yaml-language-server: $schema=../../../../schemas/modified_activity.yaml
 
 source_act:
   act_name: printed wiring board production, for surface mounting, Pb free surface

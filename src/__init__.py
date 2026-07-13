@@ -1,7 +1,9 @@
 import bw2data as bd
 import bw2io as bi
+from collections.abc import Iterable
 import lca_algebraic as agb
 import logging
+from pathlib import Path
 
 from src.ei_access import EI_Access
 from src.ei_access.setup import setup_ecoinvent_database
@@ -14,10 +16,20 @@ agb.unit_registry.auto_scale = True
 OS_database = "OS_database"
 
 def setup_project(custom_act_path, project_name):
+    """
+    custom_act_path can be either a list of paths or a single path
+    """
+
+    if not isinstance(custom_act_path, Iterable) or isinstance(custom_act_path, (str, bytes)):
+        custom_act_path = [custom_act_path]
+
     setup_project_ei(project_name)
 
-    logging.debug("Setup OS database")
-    generate_activities(custom_act_path, OS_database)
+    generate_activities(Path(__file__).resolve().parent/"smart_acts/yaml", OS_database)
+
+    for path in custom_act_path:
+        generate_activities(path, OS_database)
+
     if folder_changed("yaml/custom", "results/.snapshot"):
         export_all_db_as_enum("schemas/all_activities_enum.yaml")
 

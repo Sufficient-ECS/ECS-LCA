@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../schemas/custom_activity.yaml
+# yaml-language-server: $schema=../../../../schemas/custom_activity.yaml
 
 output:
   product: smart_PCB
