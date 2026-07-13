@@ -1,10 +1,14 @@
 enum:
+  - µg
+  - microgram
   - mg
   - milligram
   - g
   - gram
   - kg
   - kilogram
+  - µm
+  - micrometer
   - mm
   - millimeter
   - cm
