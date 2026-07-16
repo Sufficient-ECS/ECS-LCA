@@ -1,5 +1,5 @@
 from src.acts.composite_activities import composite_activity
-from src.utils.utils import find_activity, get_param, act_name_sanit
+from src.utils.utils import find_activity, get_param, act_name_sanit, get_location
 from src.smart_acts import smart_activity
 
 from pathlib import Path
@@ -36,7 +36,7 @@ def input_to_activity(param_name, input_value, db):
 
     # Resolve mapping
     ei_names = input_value["act_name"]
-    location = input_value.get("location", "GLO" if ef_cat == None else None)
+    location = get_location(input_value, ef_cat)
     ref_prod = input_value.get("ref_prod", None)
 
     if ef_cat != None:

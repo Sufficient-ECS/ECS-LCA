@@ -69,6 +69,11 @@ def get_param_type(value):
     else:
         raise ValueError(f"Unsupported type: {typenum_capa(value)}")
 
+def get_location(input_value, ef_cat):
+    location = input_value.get("location", "GLO" if ef_cat == None else None)
+
+    return location
+
 def get_param(name,amount):
     """
         Returns the parameter for the given amount

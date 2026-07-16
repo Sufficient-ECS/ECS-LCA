@@ -1,4 +1,4 @@
-from src.utils.utils import find_activity, get_param, unit_trans
+from src.utils.utils import find_activity, get_param, unit_trans, get_location
 
 from maxent_disaggregation import sample_shares
 import lca_algebraic as agb
@@ -75,7 +75,7 @@ def composite_activity(param_name, input_value, db):
         
         ef_cat = element.get("ef_cat", None)
 
-        location = element.get("location", "GLO" if ef_cat == None else None)
+        location = get_location(element, ef_cat)
         ref_prod = element.get("ref_prod", None)
 
         if ef_cat != None:
