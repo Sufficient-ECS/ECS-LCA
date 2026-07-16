@@ -6,11 +6,6 @@ from src import setup_project_ei
 from src.utils.utils import load_tuple_file
 import os
 
-setup_project_ei("ECS-LCA")
-rows = list(bd.methods)
-
-os.makedirs("results/", exist_ok=True)
-check = set(load_tuple_file("results/method_list.txt", sep=','))
 
 def save_tuple_set(data_set, filename, sep="|"):
     """
@@ -20,13 +15,14 @@ def save_tuple_set(data_set, filename, sep="|"):
         for x in data_set:
             f.write(f"{x}\n")
 
-def on_checkbox_change(checkbox, state, ud):
-    if state:
-        check.add(ud)
-    else:
-        check.discard(ud)
 class MenuApp:
     def __init__(self):
+
+        setup_project_ei("ECS-LCA")
+        rows = list(bd.methods)
+
+        os.makedirs("results/", exist_ok=True)
+        self.check = set(load_tuple_file("results/method_list.txt", sep=','))
         self.history = []
 
         self.placeholder = urwid.WidgetPlaceholder(
@@ -37,14 +33,19 @@ class MenuApp:
             self.placeholder,
             unhandled_input=self.handle_input,
         )
+    def on_checkbox_change(self, checkbox, state, ud):
+        if state:
+            self.check.add(ud)
+        else:
+            self.check.discard(ud)
 
     def treat_node(self, rows, x, n, prefix = ""):
         if len(x)-1 == n: # This is (not) the end            
             cb = urwid.CheckBox(
                 prefix + x[n],
-                state=tuple(x) in check,
+                state=tuple(x) in self.check,
             )
-            urwid.connect_signal(cb, 'change', on_checkbox_change, user_arg=tuple(x))
+            urwid.connect_signal(cb, 'change', self.on_checkbox_change, user_arg=tuple(x))
             return cb
         else:
             next_level = [list(i)  for i in rows if i[n] == x[n]]
@@ -98,7 +99,7 @@ class MenuApp:
 
     def handle_input(self, key):
         if key in ("q", "Q"):
-            save_tuple_set(check, "results/method_list.txt")
+            save_tuple_set(self.check, "results/method_list.txt")
             raise urwid.ExitMainLoop()
 
         if key == "backspace" and self.history:
