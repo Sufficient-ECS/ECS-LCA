@@ -19,7 +19,7 @@ from src.impacts.monte_carlo import stoch_impacts
     help="Custom database paths. Can be given multiple times.",
 )
 @click.option("-o", "--output_folder", default="./results", help="Output folder for results")
-@click.option("-m", "--method_file", default="./results/method_list.txt", help="Output folder for results")
+@click.option("-m", "--method_file", default="./results/method_list.txt", help="File of impact methods used")
 @click.option("-v", "--verbose", count=True, help="Increase verbosity (-v, -vv, -vvv)")
 def run_lca(input_files, cdb_path, output_folder, method_file, verbose):
     """
