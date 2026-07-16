@@ -72,6 +72,9 @@ def get_param_type(value):
 def get_location(input_value, ef_cat):
     location = input_value.get("location", "GLO" if ef_cat == None else None)
 
+    if isinstance(location, bool): # NO is read as boolean
+        location = "NO"
+
     return location
 
 def get_param(name,amount):
