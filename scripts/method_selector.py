@@ -2,10 +2,11 @@
 
 import urwid
 import bw2data as bd
+import click
+import os
+from pathlib import Path
 from src import setup_project_ei
 from src.utils.utils import load_tuple_file
-import os
-
 
 def save_tuple_set(data_set, filename, sep="|"):
     """
@@ -16,13 +17,17 @@ def save_tuple_set(data_set, filename, sep="|"):
             f.write(f"{x}\n")
 
 class MenuApp:
-    def __init__(self):
+    def __init__(self, mfile):
 
         setup_project_ei("ECS-LCA")
         rows = list(bd.methods)
 
         os.makedirs("results/", exist_ok=True)
-        self.check = set(load_tuple_file("results/method_list.txt", sep=','))
+
+        self.mfile = Path(mfile)
+        self.mfile.parent.mkdir(parents=True, exist_ok=True)
+
+        self.check = set(load_tuple_file(mfile, sep=','))
         self.history = []
 
         self.placeholder = urwid.WidgetPlaceholder(
@@ -99,7 +104,7 @@ class MenuApp:
 
     def handle_input(self, key):
         if key in ("q", "Q"):
-            save_tuple_set(self.check, "results/method_list.txt")
+            save_tuple_set(self.check, self.mfile)
             raise urwid.ExitMainLoop()
 
         if key == "backspace" and self.history:
@@ -110,6 +115,11 @@ class MenuApp:
     def run(self):
         self.loop.run()
 
+@click.command()
+@click.option("-m", "--method_file", default="./results/method_list.txt", help="File of impact methods to load/store")
+def main(method_file):
+    app = MenuApp(method_file)
+    app.run()
 
 if __name__ == "__main__":
-    MenuApp().run()
+    main()
