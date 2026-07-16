@@ -3,6 +3,7 @@
 import os
 import click
 
+from scripts.method_selector import MenuApp
 from src import setup_project
 from src.utils.utils import set_logging_level, load_tuple_file
 from src.acts.foreground import get_reference_flow
@@ -26,16 +27,20 @@ def run_lca(input_files, cdb_path, output_folder, method_file, verbose):
     Run LCA impacts on one or multiple YAML foreground files.
     """
 
+    if not os.path.isfile(method_file):
+        MenuApp(method_file).run()
+
+    meth = load_tuple_file(method_file, sep=',')
+
+    if len(meth) == 0:
+        raise ValueError("Selected at least one impact method. Please run method_selector.py to regenerate file.")
+
     set_logging_level(verbose)
     if not input_files:
         raise click.UsageError("You must provide at least one input file.")
 
     # Setup project
     setup_project(cdb_path, 'ECS-LCA')
-    if not os.path.isfile(method_file):
-        raise ValueError("Selected method file does not exist. Please run method_selector.py to generate one.")
-    meth = load_tuple_file(method_file, sep=',')
-
     # Ensure output directory exists
     os.makedirs(output_folder, exist_ok=True)
 
