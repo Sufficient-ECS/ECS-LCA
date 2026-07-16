@@ -10,6 +10,8 @@ additionalProperties:
     composition: true
     type: true
     data: true
+    ref_prod: true
+    ef_cat: true
   anyOf:
     - $ref: ./input.yaml
       type: false
