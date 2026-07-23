@@ -183,7 +183,7 @@ def set_logging_level(n=2):
     elif n >= 2:
         level = logging.DEBUG
 
-    logging.basicConfig(level=level)
+    logging.basicConfig(level=level, force=True)
     logging.getLogger("peewee").setLevel(logging.WARNING)  # or INFO if you prefer
 
 def save_tuple_set(data_set, filename, sep="|"):
