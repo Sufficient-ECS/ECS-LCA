@@ -116,7 +116,7 @@ class MenuApp:
         self.loop.run()
 
 @click.command()
-@click.option("-m", "--method_file", default="./results/method_list.txt", help="File of impact methods to load/store")
+@click.argument("method_file", default="./results/method_list.txt")
 def main(method_file):
     app = MenuApp(method_file)
     app.run()
