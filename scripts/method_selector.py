@@ -6,15 +6,7 @@ import click
 import os
 from pathlib import Path
 from src import setup_project_ei
-from src.utils.utils import load_tuple_file
-
-def save_tuple_set(data_set, filename, sep="|"):
-    """
-    Saves a set of (str, str) tuples to a file, one per line.
-    """
-    with open(filename, "w", encoding="utf-8") as f:
-        for x in data_set:
-            f.write(f"{x}\n")
+from src.utils.utils import load_tuple_file, save_tuple_set
 
 class MenuApp:
     def __init__(self, mfile):

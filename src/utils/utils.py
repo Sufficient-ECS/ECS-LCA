@@ -185,3 +185,11 @@ def set_logging_level(n=2):
 
     logging.basicConfig(level=level)
     logging.getLogger("peewee").setLevel(logging.WARNING)  # or INFO if you prefer
+
+def save_tuple_set(data_set, filename, sep="|"):
+    """
+    Saves a set of (str, str) tuples to a file, one per line.
+    """
+    with open(filename, "w", encoding="utf-8") as f:
+        for x in data_set:
+            f.write(f"{x}\n")
