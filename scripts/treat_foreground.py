@@ -62,10 +62,13 @@ def run_lca(input_files, cdb_path, output_folder, method_file, verbose):
         click.echo(f"Saved: {impacts_path}")
 
         # Stochastic impacts
-        df_stoch = stoch_impacts(reference_flow, meth, n = 2**8)
+        try:
+            df_stoch = stoch_impacts(reference_flow, meth, n = 2**8)
 
-        df_stoch.to_csv(stoch_path)
-        click.echo(f"Saved: {stoch_path}")
+            df_stoch.to_csv(stoch_path)
+            click.echo(f"Saved: {stoch_path}")
+        except Exception as e:
+            click.echo(f"Could not run stochastic, likely because no random variable, {e}")
 
 
 if __name__ == "__main__":
