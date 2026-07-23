@@ -14,8 +14,6 @@ class MenuApp:
         setup_project_ei("ECS-LCA")
         rows = list(bd.methods)
 
-        os.makedirs("results/", exist_ok=True)
-
         self.mfile = Path(mfile)
         self.mfile.parent.mkdir(parents=True, exist_ok=True)
 
