@@ -32,6 +32,7 @@ def read_existing_config():
         "path": extract("path"),
         "username": extract("username"),
         "password": extract("password"),
+        "premise_decryption_key": extract("premise_decryption_key"),
     }
 
 
@@ -50,6 +51,9 @@ def write_config(data):
         # Fill if you want to download the database
         self.username = "{data.get("username")}"
         self.password = "{data.get("password")}"
+
+        # Premise
+        self.premise_decryption_key = "{data.get("premise_decryption_key")}"
 '''
 
     with open(CONFIG_FILE, "w") as f:
@@ -85,7 +89,7 @@ def main():
         change = click.prompt(
             "What do you want to change?",
             type=click.Choice(
-                ["all", "credentials", "database_path", "version", "model", "nothing"]
+                ["all", "credentials", "database_path", "version", "model", "premise", "nothing"]
             ),
             default="all",
         )
@@ -128,6 +132,9 @@ def main():
         if existing and new_model != existing.get("system_model"):
             model_changed = True
         data["system_model"] = new_model
+
+    if not existing or change in ["all", "premise"]:
+        data["premise_decryption_key"] = click.prompt("Premise decryption key (string)")
 
     write_config(data)
 

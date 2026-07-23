@@ -38,15 +38,21 @@ def find_activity(activity_name, location, ref_prod = None, ef_cat = None, custo
     if custom_db != None:
         try:
             return agb.findActivity(activity_name, db_name=custom_db)
-        except Exception:
-            pass
+        except Exception as e:
+            logging.debug(e)
 
     try:
-        return agb.findTechAct(activity_name, loc=location, reference_product=ref_prod)
+        return agb.findActivity(activity_name,
+                               loc=location,
+                               reference_product=ref_prod,
+                               db_name = agb.database._listTechBackgroundDbs()[0]
+                               )
     except Exception as e:
         if str(e).startswith("Several activity found in"):
             logging.warning("Please add a reference product to eliminate uncertainty")
             raise e
+        else:
+            logging.debug(e)
 
     # We already know this has failed, just check if user should have passed a category
     try:

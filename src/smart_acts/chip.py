@@ -100,7 +100,7 @@ def get_acts():
         find_activity("mod_waf", "GLO", custom_db=OS_database),
         find_activity("market_circ_logic_no_waf", "GLO", custom_db=OS_database),
         find_activity("market_circ_memory_no_waf", "GLO", custom_db=OS_database),
-        agb.findTechAct("market group for electricity, medium voltage", "GLO")
+        find_activity("market group for electricity, medium voltage", "GLO")
     )
 
 def chip_smart_activity(activity, param_name, db):

@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schemas/foreground.yaml
+
+diflu:
+  act_name: 1,1-difluoroethane production
+  location: US
+  amount:
+    value: 1
+    unit: kg
+
+but:
+  act_name: butanols production, hydroformylation of propylene
+  ref_prod: isobutanol
+  location: RoW
+  amount:
+    value: 1
+    unit: kg

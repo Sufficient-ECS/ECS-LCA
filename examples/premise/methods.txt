@@ -1,0 +1,1 @@
+('ecoinvent-3.11', 'IPCC 2013', 'climate change', 'global warming potential (GWP100)')

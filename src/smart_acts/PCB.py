@@ -33,7 +33,7 @@ def get_acts():
     from src import OS_database
     # import can't be moved to the start of the file because of circular import
     return (
-        agb.findTechAct("market for copper, cathode", "GLO"),
-        agb.findTechAct("market for gold", "GLO"),
+        find_activity("market for copper, cathode", "GLO"),
+        find_activity("market for gold", "GLO"),
         find_activity("pcb_no_copper_no_gold", "GLO", custom_db=OS_database),
     )
