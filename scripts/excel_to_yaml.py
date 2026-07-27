@@ -91,21 +91,22 @@ def main(input_file, output_file, key, value, unit, act_name, loc, dmin, dmax, d
         entry = {}
         should_comment = False
 
+        entry_amount = entry.setdefault("amount", {})
         # VALUE
         if value:
             v = safe_float(row.get(value))
             if v is None:
                 should_comment = True
-            entry.setdefault("amount", {})["value"] = v if v is not None else 0
+            entry_amount["value"] = v if v is not None else 0
         else:
-            entry.setdefault("amount", {})["value"] = 0
+            entry_amount["value"] = 0
 
         # UNIT
         if unit:
             u = row.get(unit)
             if pd.isna(u):
                 should_comment = True
-            entry["amount"]["unit"] = u if pd.notna(u) else None
+            entry_amount["unit"] = u if pd.notna(u) else None
 
         # ACTIVITY NAME
         if act_name:
@@ -124,25 +125,25 @@ def main(input_file, output_file, key, value, unit, act_name, loc, dmin, dmax, d
                 entry["location"] = l
 
         if distrib or dmin or dmax or dstd:
-            entry["uncertainty"] = {}
+            entry_amount["uncertainty"] = {}
 
         if distrib:
             l = row.get(distrib)
             if not pd.isna(l):
-                entry["uncertainty"]["distribution"] = l
+                entry_amount["uncertainty"]["distribution"] = l
 
         if dmin:
             l = row.get(dmin)
             if not pd.isna(l):
-                entry["uncertainty"]["min"] = l
+                entry_amount["uncertainty"]["min"] = l
         if dmax:
             l = row.get(dmax)
             if not pd.isna(l):
-                entry["uncertainty"]["max"] = l
+                entry_amount["uncertainty"]["max"] = l
         if dstd:
             l = row.get(dstd)
             if not pd.isna(l):
-                entry["uncertainty"]["std"] = l
+                entry_amount["uncertainty"]["std"] = l
 
         # Store
         if should_comment:
