@@ -47,16 +47,17 @@ def setup_project_ei(project_name, premise_file = None):
     agb.resetDb(OS_database)
     agb.resetParams()   
     agb.setForeground(OS_database) #Create one database where all custom and modified activities will be added.
-    
+
     logging.debug("Setup ecoinvent")
 
     setup_ecoinvent_database(ei_acc)
 
+    if ei_acc.use_imec_net_zero:
+        init_imecnz_db(ei_acc)
+
     if premise_file != None:
         logging.debug(f"Setup premise with {premise_file}")
         init_premise(ei_acc, premise_file)
-
-
 
 def _newPremise_Database(scenarios):
     scenarios = json.loads(scenarios)
@@ -113,3 +114,17 @@ def init_premise(ei_acc, premise_file):
         return
 
     _newPremise_Database(json.dumps(scenarios, sort_keys=True))
+
+
+def init_imecnz_db(ei_acc):
+
+    if "exchange_mapping_database" in bd.databases.keys():
+        return
+
+    imp = bi.ExcelImporter(ei_acc.imec_custom_db_path)
+    imp.apply_strategies()
+    imp.match_database('ecoinvent-3.11-cutoff', fields=('name', 'unit', 'location'))
+    imp.statistics()
+
+    logging.warning(list(imp.unlinked))
+    imp.write_database()

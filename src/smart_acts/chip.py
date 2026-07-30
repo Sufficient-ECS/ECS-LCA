@@ -2,6 +2,12 @@ import lca_algebraic as agb
 from functools import lru_cache
 from src.utils.utils import find_activity, get_param
 import logging
+import numpy as np
+
+from src.ei_access.imec_n0 import get_die_act, tech_n_avail
+from src.ei_access import EI_Access
+
+eia = EI_Access()
 
 def die_area_pred(package_data, p_area, param_name):
     # Return predicted die area in mm² based on package size.
@@ -63,7 +69,7 @@ def waf_elec_int(d_tech):
         "N2": 3.75,
         "N3": 3.77,
         "N5": 3.18,
-        "N7 EUV": 2.72,
+        "N7_EUV": 2.72,
         "N7": 2.77,
         "N10": 2.09,
         "N14": 1.83,
@@ -109,6 +115,7 @@ def chip_smart_activity(activity, param_name, db):
     die_area = data.get("die", {}).get("area", None)
     pack_weight = data.get("package", {}).get("weight", None)
     pack_area = get_param(f"{param_name}_pack_area", data.get("package", {}).get("area", None))
+    tech_n = data.get("die",{}).get("technology")
 
     if die_area != None:
         die_area = get_param(f"{param_name}_die_area", die_area)
@@ -132,8 +139,30 @@ def chip_smart_activity(activity, param_name, db):
         logging.warning(f"Chip type not explictely given for {param_name}, defaulting to logic")
         ind_type = 1
 
-    a1 = (acts[0], die_area*n_chips)
     a2 = (acts[ind_type], pack_weight*n_chips)
-    a3 = (acts[3], waffer_elec*n_chips)
 
-    return [a1, a2, a3]
+    if eia.use_imec_net_zero:# and tech_n in tech_n_avail:
+        act = get_die_act(tech_n, die_area, eia)
+
+        # Die per Wafer = (pi * R² - F_corr * 2 * pi *R * L_D)/A_D
+        # We actually want Wafer per die 
+        # we do the inverse in the return with the division
+
+        side_kerf = die_area**0.5 + agb.unit_registry.Quantity(60, "μm")
+        die_area = side_kerf**2
+
+        R = agb.unit_registry.Quantity(150, "mm")
+        R -= agb.unit_registry.Quantity(3, "mm") #  wafer edge exclusion of 3mm
+        de_vries = np.pi * R**2  #pi * R²
+
+        # Supposing L_D = sqrt(R) and F_corr = 0.51
+        # F_corr * 2 * pi *R * L_D
+        de_vries -= 0.51 * 2 * np.pi * R * side_kerf
+        agb.unit_registry.define("Wafer = []")
+
+        return [(act, die_area/de_vries * agb.unit_registry("Wafer")), a2]
+    else:
+        a1 = (acts[0], die_area*n_chips)
+        a3 = (acts[3], waffer_elec*n_chips)
+
+        return [a1, a2, a3]

@@ -5,4 +5,5 @@ maxent_disaggregation
 corner
 click
 urwid
+msal
 premise

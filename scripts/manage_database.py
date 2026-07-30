@@ -33,6 +33,13 @@ def read_existing_config():
         "username": extract("username"),
         "password": extract("password"),
         "premise_decryption_key": extract("premise_decryption_key"),
+        "api_id": extract("api_id"),
+        "client_id": extract("client_id"),
+        "client_secret": extract("client_secret"),
+        "use_imec_net_zero": extract("use_imec_net_zero"),
+        "imec_custom_db_path": extract("imec_custom_db_path"),
+        "tenant_id": extract("tenant_id"),
+        "api_base_url": extract("api_base_url"),
     }
 
 
@@ -54,6 +61,15 @@ def write_config(data):
 
         # Premise
         self.premise_decryption_key = "{data.get("premise_decryption_key")}"
+
+        # Fill if you want access to imec_net_zero api
+        self.use_imec_net_zero = {data.get("use_imec_net_zero")}
+        self.api_id = "{data.get("api_id")}"
+        self.client_id = "{data.get("client_id")}"
+        self.client_secret = "{data.get("client_secret")}"
+        self.imec_custom_db_path = "{data.get("imec_custom_db_path")}"
+        self.tenant_id = "{data.get("tenant_id")}"
+        self.api_base_url = "{data.get("api_base_url")}"
 '''
 
     with open(CONFIG_FILE, "w") as f:
@@ -89,7 +105,7 @@ def main():
         change = click.prompt(
             "What do you want to change?",
             type=click.Choice(
-                ["all", "credentials", "database_path", "version", "model", "premise", "nothing"]
+                ["all", "credentials", "database_path", "version", "model", "imec", "premise", "nothing"]
             ),
             default="all",
         )
@@ -135,6 +151,18 @@ def main():
 
     if not existing or change in ["all", "premise"]:
         data["premise_decryption_key"] = click.prompt("Premise decryption key (string)")
+
+    # --- Model ---
+    if not existing or change in ["all", "imec"]:
+        use_imec_net_zero = click.confirm("Do you want to use imec net zero?")
+        data["use_imec_net_zero"] = use_imec_net_zero
+        if click.confirm("Do you want to update credentials?"):
+            data["api_id"] = click.prompt("API Client ID (string)")
+            data["client_id"] = click.prompt("Client ID (string)")
+            data["client_secret"] = click.prompt("Client secret (string)")
+            data["imec_custom_db_path"] = click.prompt("Path to imec databases")
+            data["tenant_id"] = click.prompt("Tenant ID (string)")
+            data["api_base_url"] = click.prompt("API base url (string)")
 
     write_config(data)
 

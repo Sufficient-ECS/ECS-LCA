@@ -26,12 +26,13 @@ properties:
           - N2
           - N3
           - N5
-          - N7 EUV
           - N7
+          - N7_EUV
           - N10
           - N14
           - N20
           - N28
+          - N40
           - N45
           - N65
           - N90
