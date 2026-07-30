@@ -12,6 +12,29 @@ additionalProperties:
     data: true
     ref_prod: true
     ef_cat: true
+
+    year:
+      oneOf:
+        - type: number
+        - type: array
+          maxItems: 2
+          items:
+            type: number
+
+    t_delta:
+      oneOf:
+        - type: number
+        - type: array
+          maxItems: 2
+          items:
+            type: number
+        - type: array
+          items:
+            type: array
+            maxItems: 2
+            items:
+              type: number
+
   anyOf:
     - $ref: ./input.yaml
       type: false

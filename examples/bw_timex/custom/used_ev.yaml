@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../../schemas/custom_activity.yaml
+
+output:
+  product: used EV
+  amount:
+    value: 1
+    unit: unit
+
+inputs:
+  glider:
+    t_delta: 0.25
+    act_name: treatment of used glider, passenger car, shredding
+    amount:
+      value: -840
+      unit: kg
+
+  powertrain:
+    t_delta: 0.25
+    act_name: treatment of used powertrain for electric passenger car, manual dismantling
+    amount:
+      value: -80
+      unit: kg
+
+  battery:
+    t_delta: 0.25
+    act_name: market for used Li-ion battery
+    amount:
+      value: -280
+      unit: kg

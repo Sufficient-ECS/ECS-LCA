@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schemas/foreground.yaml
+
+prod:
+  # We need to put it here to have the t_delta between driving and product
+
+  year: 2024
+  act_name: ev_production
+  amount:
+    value: 1
+    unit: unit
+
+use:
+  year: [2024, 2040]
+  act_name: driving # also contains production as input
+  amount:
+    value: 150000
+    unit: km
+
+eol:
+  year: 2040
+  act_name: used_ev
+  amount:
+    value: 1
+    unit: unit

@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../../schemas/modified_activity.yaml
+
+
+
+source_act:
+  act_name: powertrain production, for electric passenger car
+  location: GLO
+
+to_update:
+  E1:
+    ex_name: used powertrain from electric passenger car, manual dismantling
+    amount:
+      value: 0
+      unit: kg
+

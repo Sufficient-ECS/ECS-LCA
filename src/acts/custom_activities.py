@@ -6,6 +6,9 @@ from pathlib import Path
 import lca_algebraic as agb
 import yaml
 import logging
+import numpy as np
+from bw_temporalis import TemporalDistribution, easy_timedelta_distribution
+from datetime import datetime
 
 def load_custom_activities(yaml_path):
     activities = []
@@ -48,6 +51,33 @@ def input_to_activity(param_name, input_value, db):
     if not isinstance(ei_names, list):
         ei_names = [ei_names]
 
+    if "t_delta" in input_value:
+        tv = input_value["t_delta"]
+
+        if isinstance(tv, list) and isinstance(tv[0], list):
+            # list of (year delta, amount)
+            tv = np.array(tv).T
+            td = TemporalDistribution(date=np.round(tv[0]*12).astype("timedelta64[M]"), amount=tv[1])
+        elif isinstance(tv, list):
+            # (year delta begin, year delta end)
+            td = easy_timedelta_distribution(
+                start=round(tv[0]*12),
+                end=round(tv[1]*12),
+                resolution="M",
+                steps=tv[1] - tv[0] + 1,
+                kind="uniform",
+            )
+        else:
+            # year delta
+            td =TemporalDistribution(
+                date=np.array([round(tv * 12)], dtype="timedelta64[M]"), amount=np.array([1])
+            )
+        
+        param = {
+            "amount" : param,
+            "temporal_distribution" : td
+        }
+
     return [(find_activity(ei_name, location, ref_prod, ef_cat, db), param) for ei_name in ei_names]
 
 def create_custom_activities(activities, foreground_db):
@@ -80,20 +110,14 @@ def create_custom_activities(activities, foreground_db):
 def add_all_exchanges(all_acts, foreground_db):
 
     for act, input_data in all_acts:
-        exchanges = {}
-
         for input_name, input_value in input_data.items():
             param_name = act_name_sanit(f"{act['name']}_{input_name}")
             if input_value is None:
                 raise ValueError(f"Input '{input_name}' in activity '{act['name']}' is None — check your YAML for a missing definition.")
 
             logging.debug(f"Treating {param_name}")
-
             for child_act, param in input_to_activity(param_name, input_value, foreground_db):
-                #Need to do the get in case where multiple inputs link to the same activity
-                exchanges[child_act] =  exchanges.get(child_act,0) + param
-
-        act.addExchanges(exchanges)
+                act.addExchanges({child_act : param})
 
 def update_all_exchanges(all_acts, foreground_db):
     for act, update_data in all_acts:

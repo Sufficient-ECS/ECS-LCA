@@ -2,7 +2,9 @@
 
 import os
 import click
+from datetime import datetime
 import lca_algebraic as agb
+import re
 
 from scripts.method_selector import MenuApp
 from src import setup_project
@@ -12,6 +14,7 @@ from src.utils.db import make_main_tech
 from src.acts.foreground import get_reference_flow
 from src.impacts.contribution import compute_impacts
 from src.impacts.monte_carlo import stoch_impacts
+from src.impacts.temporal import compute_temp_impacts
 
 ei_acc = EI_Access()
 
@@ -74,6 +77,38 @@ def run_lca(input_files, cdb_path, output_folder, method_file, scenario_file, ve
             click.echo(f"Saved: {stoch_path}")
         except Exception as e:
             click.echo(f"Could not run stochastic, likely because no random variable, {e}")
+
+        if False and scenario_file != None:
+            scenarios_tuple = load_tuple_file(scenario_file, sep=',')
+            name = (
+                f"ei_{ei_acc.system_model}_{ei_acc.version}_{scenarios_tuple[0][0]}_{scenarios_tuple[0][1]}"
+            )
+            filtered = [
+                db for db in agb.database.list_databases().index
+                if db.startswith(name)
+            ]
+
+            year_to_db = {
+                db : datetime.strptime(re.search(r"_(\d{4})", db).group(1), "%Y")
+                for db in filtered
+            }
+
+            make_main_tech(filtered[0])
+
+            time_path = os.path.join(output_folder, f"{base_name}_temp_time.csv")
+            metrics_path = os.path.join(output_folder, f"{base_name}_temp_metrics.csv")
+
+            print(year_to_db)
+
+            time_data, metrics_data = compute_temp_impacts(reference_flow, meth, year_to_db)
+
+            time_data.to_csv(time_path)
+            click.echo(f"Saved: {time_path}")
+
+            metrics_data.to_csv(metrics_path)
+            click.echo(f"Saved: {metrics_path}")
+
+            make_main_tech()
 
         if scenario_file != None:
             scenarios_tuple = load_tuple_file(scenario_file, sep=',')

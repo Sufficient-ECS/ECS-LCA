@@ -1,4 +1,8 @@
+from bw_temporalis import TemporalDistribution
+from datetime import datetime
 import lca_algebraic as agb
+import logging
+import numpy as np
 from pathlib import Path
 import yaml as yml
 
@@ -23,8 +27,28 @@ def process_fground(fground, foreground_db, name):
             if i[:2] == "c_":
                 rep[new_activity_name][i[2:]] = input_value[i]
 
+        td = None
+        if "year" in input_value:
+            tv = input_value["year"]
+
+            if isinstance(input_value["year"], list):
+                dates = np.array(
+                    [np.datetime64(datetime(year, 1, 1)) for year in range(tv[0], tv[1] + 1)]
+                )
+                amounts = np.ones(len(dates)) / len(dates)
+            else:
+                dates = np.array([np.datetime64(datetime(tv, 1, 1))])
+                amounts = np.array([1.0])
+
+            td = TemporalDistribution(date=dates, amount=amounts)
+
         try:
             exchs = dict(input_to_activity(new_activity_name, input_value, foreground_db))
+            if td != None:
+                exchs = {
+                    k: {"amount": v, "temporal_distribution": td}
+                    for k, v in exchs.items()
+                }
             act = agb.newActivity(foreground_db, 
                                 new_activity_name,
                                 "unit",
