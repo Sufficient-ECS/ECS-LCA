@@ -1,11 +1,13 @@
 from src.acts.composite_activities import composite_activity
-from src.utils.utils import find_activity, get_param, act_name_sanit, get_location
+from src.utils.utils import find_activity, get_param, act_name_sanit, get_location, parse_delta_time
 from src.smart_acts import smart_activity
 
 from pathlib import Path
 import lca_algebraic as agb
 import yaml
 import logging
+import numpy as np
+from datetime import datetime
 
 def load_custom_activities(yaml_path):
     activities = []
@@ -48,6 +50,14 @@ def input_to_activity(param_name, input_value, db_store, db_find):
     if not isinstance(ei_names, list):
         ei_names = [ei_names]
 
+    if "t_delta" in input_value:
+        td = parse_delta_time(input_value["t_delta"])
+        
+        param = {
+            "amount" : param,
+            "temporal_distribution" : td
+        }
+
     return [(find_activity(ei_name, location, ref_prod, ef_cat, db_find), param) for ei_name in ei_names]
 
 def create_custom_activities(activities, db_store, db_find):
@@ -80,20 +90,14 @@ def create_custom_activities(activities, db_store, db_find):
 def add_all_exchanges(all_acts, db_store, db_find):
 
     for act, input_data in all_acts:
-        exchanges = {}
-
         for input_name, input_value in input_data.items():
             param_name = act_name_sanit(f"{act['name']}_{input_name}")
             if input_value is None:
                 raise ValueError(f"Input '{input_name}' in activity '{act['name']}' is None — check your YAML for a missing definition.")
 
             logging.debug(f"Treating {param_name}")
-
             for child_act, param in input_to_activity(param_name, input_value, db_store, db_find):
-                #Need to do the get in case where multiple inputs link to the same activity
-                exchanges[child_act] =  exchanges.get(child_act,0) + param
-
-        act.addExchanges(exchanges)
+                act.addExchanges({child_act : param})
 
 def update_all_exchanges(all_acts, db_store):
     for act, update_data in all_acts:

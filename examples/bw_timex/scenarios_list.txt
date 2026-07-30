@@ -1,0 +1,3 @@
+('remind-eu', 'SSP2-NDC', 2040)
+('remind-eu', 'SSP2-NDC', 2030)
+('remind-eu', 'SSP2-NDC', 2020)

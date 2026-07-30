@@ -1,0 +1,1 @@
+('ecoinvent-3.12', 'EF v3.1', 'climate change', 'global warming potential (GWP100)')

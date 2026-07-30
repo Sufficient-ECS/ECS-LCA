@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../../schemas/custom_activity.yaml
+
+output:
+  product: EV car
+  amount:
+    value: 1
+    unit: unit
+
+inputs:
+
+  glider:
+
+    t_delta:
+      - [-2, 0.7]
+      - [-1, 0.1]
+      - [ 0, 0.2]
+    act_name: glider_production_without_eol
+    amount:
+      value: 840
+      unit: kg
+
+  powertrain:
+    t_delta: -1
+    act_name: powertrain_production_without_eol
+    amount:
+      value: 80
+      unit: kg
+
+  battery:
+    t_delta: -1
+    act_name: battery production, Li-ion, LiMn2O4, rechargeable
+    amount:
+      value: 280
+      unit: kg

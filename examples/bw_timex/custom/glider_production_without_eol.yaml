@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../../schemas/modified_activity.yaml
+
+
+
+source_act:
+  act_name: glider production, passenger car
+  location: GLO
+
+to_update:
+  E1:
+    ex_name: used glider, passenger car
+    amount:
+      value: 0
+      unit: kg
+

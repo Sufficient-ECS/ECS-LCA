@@ -1,3 +1,8 @@
+from bw_temporalis import TemporalDistribution
+from datetime import datetime
+import lca_algebraic as agb
+import logging
+import numpy as np
 from pathlib import Path
 
 import lca_algebraic as agb
@@ -5,7 +10,7 @@ import yaml as yml
 
 from src import BG_DB, FG_DB
 from src.acts.custom_activities import input_to_activity
-from src.utils.utils import act_name_sanit
+from src.utils.utils import act_name_sanit, parse_time
 
 def process_fground(fground, name):
     ret, rep = [], {}
@@ -31,8 +36,17 @@ def process_fground(fground, name):
         for attr, val in global_attr.items():
             rep[new_activity_name][attr] = val
 
+        td = None
+        if "year" in input_value:
+            td = parse_time(input_value["year"])
+
         try:
             exchs = dict(input_to_activity(new_activity_name, input_value, FG_DB, BG_DB))
+            if td != None:
+                exchs = {
+                    k: {"amount": v, "temporal_distribution": td}
+                    for k, v in exchs.items()
+                }
             act = agb.newActivity(FG_DB, 
                                 new_activity_name,
                                 "unit",

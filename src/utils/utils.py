@@ -7,6 +7,8 @@ from functools import lru_cache
 import logging
 import re
 import ast
+import numpy as np
+from bw_temporalis import TemporalDistribution, easy_timedelta_distribution, easy_datetime_distribution
 
 def load_tuple_file(filename, sep="|"):
     """
@@ -205,3 +207,59 @@ def save_tuple_set(data_set, filename, sep="|"):
     with open(filename, "w", encoding="utf-8") as f:
         for x in data_set:
             f.write(f"{x}\n")
+
+def parse_delta_time(tv):
+
+    if isinstance(tv, list) and isinstance(tv[0], list):
+        # list of (year delta, amount)
+        tv = np.array(tv).T
+        td = TemporalDistribution(date=np.round(tv[0]*12).astype("timedelta64[M]"), amount=tv[1])
+
+            
+    elif isinstance(tv, list):
+        # (year delta begin, year delta end)
+        td = easy_timedelta_distribution(
+            start=round(tv[0]*12),
+            end=round(tv[1]*12),
+            resolution="M",
+            kind="uniform",
+        )
+    else:
+        # year delta
+        td =TemporalDistribution(
+            date=np.array([round(tv * 12)], dtype="timedelta64[M]"), amount=np.array([1])
+            )
+
+    return td
+
+
+def decimal_year_to_datetime64(y):
+    year = int(y)
+    fraction = y - year
+    
+    # Days in the year (account for leap years)
+    days = 366 if np.datetime64(f"{year}-12-31") - np.datetime64(f"{year}-01-01") == np.timedelta64(365, "D") else 365
+    
+    return np.datetime64(f"{year}-01-01") + np.timedelta64(int(fraction * days), "D")
+
+
+
+def parse_time(tv):
+    if isinstance(tv, list) and isinstance(tv[0], list):
+        tv = np.array(tv).T
+        dates = np.array([decimal_year_to_datetime64(t) for t in tv[0]])
+        amounts = tv[1]
+        td = TemporalDistribution(date=dates, amount=amounts)
+    elif isinstance(tv, list):
+        # (year delta begin, year delta end)
+        td = easy_datetime_distribution(
+            start=str(decimal_year_to_datetime64(tv[0])),
+            end=str(decimal_year_to_datetime64(tv[1])),
+            kind="uniform",
+        )
+    else:
+        dates = np.array([decimal_year_to_datetime64(tv)])
+        amounts = np.array([1.0])
+        td = TemporalDistribution(date=dates, amount=amounts)
+
+    return td

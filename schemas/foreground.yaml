@@ -12,6 +12,13 @@ additionalProperties:
     data: true
     ref_prod: true
     ef_cat: true
+
+    year:
+      $ref: ./time_distribution.yaml
+
+    t_delta:
+      $ref: ./time_distribution.yaml
+
   anyOf:
     - $ref: ./input.yaml
       type: false
