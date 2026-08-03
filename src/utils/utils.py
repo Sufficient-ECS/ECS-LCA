@@ -83,6 +83,17 @@ def get_location(input_value, ef_cat):
 
     return location
 
+def clean_param_name(name):
+    return name.translate(str.maketrans(
+        {
+            '²': '2',
+            '³': '3',
+            '-': '_',
+            ' ': '_',
+            ':': '_'
+        }
+    ))
+
 def get_param(name,amount):
     """
         Returns the parameter for the given amount
@@ -94,14 +105,7 @@ def get_param(name,amount):
 
     param_type = get_param_type(amount["value"]).strip().lower()
     param_name = f"{name}_{amount['unit']}"
-    param_name = param_name.translate(str.maketrans(
-        {
-            '²': '2',
-            '³': '3',
-            '-': '_',
-            ' ': '_'
-        }
-    ))
+    param_name = clean_param_name(param_name)
     try:
         if param_type == "float":
             unc = amount.get("uncertainty",{})
