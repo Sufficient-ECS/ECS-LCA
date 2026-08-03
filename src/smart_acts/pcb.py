@@ -2,7 +2,7 @@ import lca_algebraic as agb
 from functools import lru_cache
 from src.utils.utils import find_activity, get_param
 
-def PCB_smart_activity(activity, param_name, db):
+def pcb_smart_activity(activity, param_name, db):
 
     data = activity["data"]
 
