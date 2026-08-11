@@ -125,6 +125,7 @@ def get_param(name,amount):
                 max=unc.get("max") * fac if unc.get("max") is not None else None,
                 std=unc.get("std") * fac if unc.get("std") is not None else None,
                 distrib=getattr(agb.DistributionType, distrib, None),
+                save=False,
             )
         else:
             raise ValueError(f"Unsupported parameter type: {param_type}")
