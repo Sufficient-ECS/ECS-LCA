@@ -10,6 +10,11 @@ from src import OS_database
 def process_fground(fground, foreground_db, name):
     ret, rep = [], {}
 
+    global_attr = {}
+    for i in fground:
+        if i[:2] == "c_":
+            global_attr[i[2:]] = fground[i]
+
     if "inputs" in fground:
         fground = fground["inputs"]
 
@@ -22,6 +27,9 @@ def process_fground(fground, foreground_db, name):
         for i in input_value:
             if i[:2] == "c_":
                 rep[new_activity_name][i[2:]] = input_value[i]
+
+        for attr, val in global_attr.items():
+            rep[new_activity_name][attr] = val
 
         try:
             exchs = dict(input_to_activity(new_activity_name, input_value, foreground_db))
