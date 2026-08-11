@@ -30,7 +30,7 @@ def input_to_activity(param_name, input_value, db_store, db_find):
     if "composition" in input_value:
         return composite_activity(param_name, input_value, db_store, db_find)
     
-    param = get_param(param_name, input_value["amount"])
+    param = get_param(param_name, input_value["amount"], db_store)
 
     ef_cat = input_value.get("ef_cat", None)
 
@@ -100,7 +100,7 @@ def update_all_exchanges(all_acts, db_store):
         exchanges = {}
         for key, data in update_data.items():
             param_name = f"{act['name']}_{key}"
-            param = get_param(param_name, data["amount"])
+            param = get_param(param_name, data["amount"], db_store)
             #Need to do the get in case where multiple inputs link to the same activity
             try:
                 if "location" in data:

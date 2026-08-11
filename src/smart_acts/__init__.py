@@ -7,7 +7,7 @@ from src.smart_acts.pcb import pcb_model
 from src.utils.utils import get_param
 
 
-def smart_activity(activity, param_name, db):
+def smart_activity(activity, param_name, db_store):
     if activity["type"] == "chip":
         model = chip_model
     elif activity["type"] == "pcb":
@@ -15,7 +15,7 @@ def smart_activity(activity, param_name, db):
     else:
         raise ValueError("Activity type not supported")
 
-    data = fetch_vars(activity["data"], model["variables"], model["fetch_map"], model["defaults"], param_name)
+    data = fetch_vars(activity["data"], model["variables"], model["fetch_map"], model["defaults"], param_name, db_store)
     data = find_best_vars(data, model["relations"], param_name)
 
     result = []
@@ -26,7 +26,7 @@ def smart_activity(activity, param_name, db):
 
     return result
 
-def fetch_vars(data, varis, fm, defaults, param_name):
+def fetch_vars(data, varis, fm, defaults, param_name, db_store):
     ret = {var : (np.infty, None) for var in varis}
 
     for var in defaults:
@@ -41,7 +41,7 @@ def fetch_vars(data, varis, fm, defaults, param_name):
                 current = current[mapping[i]]
             else:
                 if mapping[-1] == "amount":
-                    ret[var] = (0, get_param(f"{param_name}_{var}", current))
+                    ret[var] = (0, get_param(f"{param_name}_{var}", current, db_store))
                 elif mapping[-1] == "value":
                     ret[var] = (0, current)
                 else:

@@ -94,7 +94,7 @@ def clean_param_name(name):
         }
     ))
 
-def get_param(name,amount):
+def get_param(name,amount, db):
     """
         Returns the parameter for the given amount
         amount MUST have a value and a unit field
@@ -126,6 +126,7 @@ def get_param(name,amount):
                 std=unc.get("std") * fac if unc.get("std") is not None else None,
                 distrib=getattr(agb.DistributionType, distrib, None),
                 save=False,
+                dbname=db,
             )
         else:
             raise ValueError(f"Unsupported parameter type: {param_type}")

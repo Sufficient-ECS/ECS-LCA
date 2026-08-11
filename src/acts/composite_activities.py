@@ -42,7 +42,7 @@ class ParamDisagg(agb.stats.ParamDef):
 def composite_activity(param_name, input_value, db_store, db_find):
 
     total = input_value["amount"]
-    param = get_param(param_name, total)
+    param = get_param(param_name, total, db_store)
     exchanges = {}
 
     share_sum = 0
