@@ -21,14 +21,14 @@ def load_custom_activities(yaml_path):
 
     return activities
 
-def input_to_activity(param_name, input_value, db):
+def input_to_activity(param_name, input_value, db_store, db_find):
     if input_value is None:
         raise ValueError(f"Input '{param_name}' has no value defined in YAML (parsed as None). Check for a missing or malformed entry.")
     if "type" in input_value:
-        return smart_activity(input_value, param_name, db)
+        return smart_activity(input_value, param_name, db_store)
 
     if "composition" in input_value:
-        return composite_activity(param_name, input_value, db)
+        return composite_activity(param_name, input_value, db_store, db_find)
     
     param = get_param(param_name, input_value["amount"])
 
@@ -48,9 +48,9 @@ def input_to_activity(param_name, input_value, db):
     if not isinstance(ei_names, list):
         ei_names = [ei_names]
 
-    return [(find_activity(ei_name, location, ref_prod, ef_cat, db), param) for ei_name in ei_names]
+    return [(find_activity(ei_name, location, ref_prod, ef_cat, db_find), param) for ei_name in ei_names]
 
-def create_custom_activities(activities, foreground_db):
+def create_custom_activities(activities, db_store, db_find):
     inputs, updates = [],[]
     for activity in activities:
         if "source_act" in activity:
@@ -58,15 +58,15 @@ def create_custom_activities(activities, foreground_db):
                 activity["source_act"]["act_name"],
                 activity["source_act"].get("location", "GLO"),
                 activity["source_act"].get("ref_prod", None),
-                custom_db=foreground_db
+                custom_db=db_find
             )
-            act = agb.activity.copyActivity(foreground_db, to_copy, code= activity['id'])
+            act = agb.activity.copyActivity(db_store, to_copy, code= activity['id'])
             logging.debug(f"Modified activity {activity['source_act']['act_name']} at {activity['source_act']['location']}\
  copied with code {activity['id']}")
         else:
             # Create new custom activity
             act = agb.newActivity(
-                foreground_db,
+                db_store,
                 activity['id'],
                 amount= activity["output"]["amount"]["value"],
                 unit = activity["output"]["amount"]["unit"],
@@ -77,7 +77,7 @@ def create_custom_activities(activities, foreground_db):
         updates.append((act,activity.get("to_update", {})))
     return inputs, updates
 
-def add_all_exchanges(all_acts, foreground_db):
+def add_all_exchanges(all_acts, db_store, db_find):
 
     for act, input_data in all_acts:
         exchanges = {}
@@ -89,13 +89,13 @@ def add_all_exchanges(all_acts, foreground_db):
 
             logging.debug(f"Treating {param_name}")
 
-            for child_act, param in input_to_activity(param_name, input_value, foreground_db):
+            for child_act, param in input_to_activity(param_name, input_value, db_store, db_find):
                 #Need to do the get in case where multiple inputs link to the same activity
                 exchanges[child_act] =  exchanges.get(child_act,0) + param
 
         act.addExchanges(exchanges)
 
-def update_all_exchanges(all_acts, foreground_db):
+def update_all_exchanges(all_acts, db_store):
     for act, update_data in all_acts:
         exchanges = {}
         for key, data in update_data.items():
@@ -112,16 +112,16 @@ def update_all_exchanges(all_acts, foreground_db):
 
         act.updateExchanges(exchanges)
 
-def generate_activities(path, db):
+def generate_activities(path, db_store, db_find):
 
     logging.debug(f"Loading custom activities from {path} in memory")
     custom_activities = load_custom_activities(path)
 
     logging.debug("Create custom activities")
-    inputs, updates = create_custom_activities(custom_activities, foreground_db=db)
+    inputs, updates = create_custom_activities(custom_activities, db_store, db_find)
 
     logging.debug("Adding exchange to all activities")
-    add_all_exchanges(inputs, foreground_db=db)
+    add_all_exchanges(inputs, db_store, db_find)
 
     logging.debug("Updating all echances for modified activities")
-    update_all_exchanges(updates, foreground_db=db)
+    update_all_exchanges(updates, db_store)

@@ -39,7 +39,7 @@ class ParamDisagg(agb.stats.ParamDef):
     def lock(self):
         self.locks[self.group_name] = True
 
-def composite_activity(param_name, input_value, db):
+def composite_activity(param_name, input_value, db_store, db_find):
 
     total = input_value["amount"]
     param = get_param(param_name, total)
@@ -67,7 +67,7 @@ def composite_activity(param_name, input_value, db):
             share = el_amount.get("value", np.nan) * u_f, 
             default = el_amount.get("value", def_unk),
             std_share = el_amount.get("uncertainty", {}).get("std", np.nan) * u_f, 
-            db_name = db,
+            db_name = db_store,
             unit = el_amount["unit"],
         )
         agb.params._param_registry()[full_name] = param_comp
@@ -85,13 +85,13 @@ def composite_activity(param_name, input_value, db):
                 ef_cat = tuple(ef_cat)
 
         # Find background activity
-        activity = find_activity(ei_name, location, ref_prod, ef_cat, db)
+        activity = find_activity(ei_name, location, ref_prod, ef_cat, db_find)
         exchanges[activity] = param_comp.with_unit()
 
     param_comp.lock()
 
     activity = agb.newActivity(
-            db,
+            db_store,
             f"{param_name}_group",
             total["unit"],
             exchanges=exchanges,

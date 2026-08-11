@@ -20,6 +20,8 @@ agb.Settings.units_enabled = True
 agb.unit_registry.auto_scale = True
 
 OS_database = "OS_database"
+BG_DB = f"{OS_database}_bg"
+FG_DB = f"{OS_database}_fg"
 
 ei_acc = EI_Access()
 
@@ -33,10 +35,10 @@ def setup_project(custom_act_path, project_name, premise_file = None):
 
     setup_project_ei(project_name, premise_file)
 
-    generate_activities(Path(__file__).resolve().parent/"smart_acts/yaml", OS_database)
+    generate_activities(Path(__file__).resolve().parent/"smart_acts/yaml", BG_DB, BG_DB)
 
     for path in custom_act_path:
-        generate_activities(path, OS_database)
+        generate_activities(path, BG_DB, BG_DB)
 
     if folder_changed("yaml/custom", "results/.snapshot"):
         export_all_db_as_enum("schemas/all_activities_enum.yaml")
@@ -44,13 +46,15 @@ def setup_project(custom_act_path, project_name, premise_file = None):
 
 def setup_project_ei(project_name, premise_file = None):
     bd.projects.set_current(project_name) # Set the current project, can be any name
-    agb.resetDb(OS_database)
-    agb.resetParams()   
-    agb.setForeground(OS_database) #Create one database where all custom and modified activities will be added.
-
     logging.debug("Setup ecoinvent")
 
     setup_ecoinvent_database(ei_acc)
+
+    agb.resetDb(FG_DB)
+    agb.resetDb(BG_DB)
+    agb.resetParams()
+    agb.setForeground(FG_DB)
+    agb.setBackground(BG_DB)
 
     if ei_acc.use_imec_net_zero:
         init_imecnz_db(ei_acc)

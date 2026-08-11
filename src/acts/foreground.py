@@ -1,13 +1,13 @@
-import lca_algebraic as agb
 from pathlib import Path
+
+import lca_algebraic as agb
 import yaml as yml
 
+from src import BG_DB, FG_DB
 from src.acts.custom_activities import input_to_activity
-from src.smart_acts import smart_activity
-from src.utils.utils import get_param, act_name_sanit
-from src import OS_database
+from src.utils.utils import act_name_sanit
 
-def process_fground(fground, foreground_db, name):
+def process_fground(fground, name):
     ret, rep = [], {}
 
     global_attr = {}
@@ -32,8 +32,8 @@ def process_fground(fground, foreground_db, name):
             rep[new_activity_name][attr] = val
 
         try:
-            exchs = dict(input_to_activity(new_activity_name, input_value, foreground_db))
-            act = agb.newActivity(foreground_db, 
+            exchs = dict(input_to_activity(new_activity_name, input_value, FG_DB, BG_DB))
+            act = agb.newActivity(FG_DB, 
                                 new_activity_name,
                                 "unit",
                                 exchanges=exchs,
@@ -48,7 +48,7 @@ def get_reference_flow(path):
     with open(path, "r") as f:
         fground = yml.safe_load(f)
 
-    exchanges_foreground, rep = process_fground(fground, OS_database, Path(path).stem)
+    exchanges_foreground, rep = process_fground(fground, Path(path).stem)
 
     return exchanges_foreground, rep
 
