@@ -1,15 +1,56 @@
-import lca_algebraic as agb
-from functools import lru_cache
-from src.utils.utils import find_activity, get_param
 import logging
+from functools import lru_cache
+
+import lca_algebraic as agb
 import numpy as np
 
-from src.ei_access.imec_n0 import get_die_act, tech_n_avail
 from src.ei_access import EI_Access
+from src.ei_access.imec_n0 import get_die_act, tech_n_avail
+from src.utils.utils import clean_param_name, find_activity
 
 eia = EI_Access()
+agb.unit_registry.define("Wafer = []")
 
-def die_area_pred(package_data, p_area, param_name):
+# List of variables:
+variables = [
+    "d_area",
+    "d_elec",
+    "d_elec_int",
+    "d_tech",
+    "n_chip",
+    "p_area",
+    "p_type",
+    "p_weight",
+    "type",
+    "tot_d_elec",
+    "tot_p_weight",
+    "tot_d_area",
+    "wafer_per_d",
+    "tot_wafer_per_d",
+]
+
+# Dictionary for how to fetch variables from user
+# Can have less variables than node has if some
+# variables cannot be given by the user
+fetch_map = {
+    "d_area"    : ("die", "area", "amount"),
+    "d_tech"    : ("die", "technology", "value"),
+    "n_chip"    : ("amount", "value"),
+    "p_area"    : ("package", "area", "amount"),
+    "p_type"    : ("packe", "type", "value"),
+    "p_weight"  : ("package", "weight", "amount"),
+    "type"      : ("type", "value")
+}
+
+defaults = {
+    "d_elec_int" : 2.76 * agb.unit_registry("kWh/cm²"), #Ecoinvent default value
+    "n_chip"     : 1,
+    "p_type"     : "BGA",
+    "type"       : "logic",
+    "d_tech"     : "N90",
+}
+
+def die_area_pred(varis, param_name):
     # Return predicted die area in mm² based on package size.
     # https://anncollin.github.io/DieAreaPrediction/
 
@@ -22,15 +63,12 @@ def die_area_pred(package_data, p_area, param_name):
         "QFP": (0.724, 0.6)
     }
 
-    if package_data["type"] not in param_die_pred:
-        raise Exception(f"Package type {package_data['type']} not supported")
+    a, beta = param_die_pred[varis["p_type"]]
 
-    a, beta = param_die_pred[package_data["type"]]
-
-    result = a * p_area.to("mm²")**beta
+    result = a * varis["p_area"].to("mm²")**beta
 
     uncertainty = agb.newFloatParam(
-            f"{param_name}_da_perr",
+            clean_param_name(f"{param_name}_da_perr"),
             default=1,
             unit="mm²",
             std=0.3,
@@ -39,7 +77,33 @@ def die_area_pred(package_data, p_area, param_name):
 
     return result.magnitude * uncertainty
 
-def pack_weight_pred(data, d_area):
+def package_area_pred(varis, param_name):
+    # Inverse of die_area_pred
+    # https://anncollin.github.io/DieAreaPrediction/
+
+    param_die_pred = {
+        "BGA": (0.822, 0.73),
+        "WLP": (0.759, 0.99),
+        "SOP": (0.063, 1.1),
+        "QFN": (0.214, 0.99),
+        "DFN": (0.214, 0.99),
+        "QFP": (0.724, 0.6)
+    }
+
+    a, beta = param_die_pred[varis["p_type"]]
+
+    uncertainty = agb.newFloatParam(
+            clean_param_name(f"{param_name}_da_perr"),
+            default=1,
+            unit="mm²",
+            std=0.3,
+            distrib="lognormal",
+        )
+
+    result = (varis["d_area"] / uncertainty / a) ** (1 / beta)
+    return result * agb.unit_registry("mm²")
+
+def pack_weight_pred(varis, param_name):
     # Temporary factor from Augustin Wattiez based on OSSDA dataset
     # waiting for more complete and precise measurements
 
@@ -52,15 +116,13 @@ def pack_weight_pred(data, d_area):
         "QFP": 4.49,
     }
 
-    p_type = data['package']['type']
+    if varis["p_type"] not in param_pack_weight:
+        raise ValueError(f"Package type {varis["p_type"]} not supported")
 
-    if p_type not in param_pack_weight:
-        raise Exception(f"Package type {p_type} not supported")
+    a_t_w = param_pack_weight[varis["p_type"]] * agb.unit_registry("mg/mm²")
+    return varis["p_area"] * a_t_w
 
-    a_t_w = param_pack_weight[p_type] * agb.unit_registry("mg/mm²")
-    return d_area * a_t_w
-
-def waf_elec_int(d_tech):
+def waf_elec_int(varis, param_name):
     # Based on
     # returns factor in kWh/cm² of wafer
     param_type_int = {
@@ -86,17 +148,45 @@ def waf_elec_int(d_tech):
 
     }
 
-    if d_tech == None:
-        return 2.76 * agb.unit_registry("kWh/cm²")#Ecoinvent default value
 
-    if d_tech not in param_type_int:
-        logging.warning(f"Technology node {d_tech} not supported, using default Ecoinvent value")
+    if varis["d_tech"] not in param_type_int:
+        logging.warning(f"Technology node {varis["d_tech"]} not supported, using default Ecoinvent value")
         return 2.76 * agb.unit_registry("kWh/cm²")
 
-    return param_type_int[d_tech] * agb.unit_registry("kWh/cm²")
+    return param_type_int[varis["d_tech"]] * agb.unit_registry("kWh/cm²")
+
+def de_vries_estimator(varis, param_name):
+    # Die per Wafer = (pi * R² - F_corr * 2 * pi *R * L_D)/A_D
+    # We actually want Wafer per die 
+    # we do the inverse in the return with the division
+
+    side_kerf = varis["d_area"]**0.5 + agb.unit_registry.Quantity(60, "μm")
+    die_area = side_kerf**2
+
+    R = agb.unit_registry.Quantity(150, "mm")
+    R -= agb.unit_registry.Quantity(3, "mm") #  wafer edge exclusion of 3mm
+    de_vries = np.pi * R**2  #pi * R²
+
+    # Supposing L_D = sqrt(R) and F_corr = 0.51
+    # F_corr * 2 * pi *R * L_D
+    de_vries -= 0.51 * 2 * np.pi * R * side_kerf
+    return die_area/de_vries * agb.unit_registry("Wafer")
 
 def waf_elec(data, d_area):
     return d_area * waf_elec_int(data.get("die",{}).get("technology"))
+
+relations = {
+    (frozenset(["p_area", "p_type"]), "d_area")         : (die_area_pred, 4),
+    (frozenset(["d_area", "p_type"]), "p_area")         : (package_area_pred, 4),
+    (frozenset(["p_area", "p_type"]), "p_weight")       : (pack_weight_pred, 3),
+    (frozenset(["d_tech"]), "d_elec_int")               : (waf_elec_int, 2),
+    (frozenset(["d_area"]), "wafer_per_d")              : (de_vries_estimator, 1),
+    (frozenset(["d_area", "d_elec_int"]), "d_elec")     : (lambda data, _: data["d_area"] * data["d_elec_int"], 0),
+    (frozenset(["d_area", "n_chip"]), "tot_d_area")     : (lambda data, _: data["d_area"] * data["n_chip"], 0),
+    (frozenset(["d_elec", "n_chip"]), "tot_d_elec")     : (lambda data, _: data["d_elec"] * data["n_chip"], 0),
+    (frozenset(["p_weight", "n_chip"]), "tot_p_weight") : (lambda data, _: data["p_weight"] * data["n_chip"], 0),
+    (frozenset(["wafer_per_d", "n_chip"]), "tot_wafer_per_d") : (lambda data, _: data["wafer_per_d"] * data["n_chip"], 0),
+}
 
 @lru_cache(maxsize=1)
 def get_acts():
@@ -108,61 +198,28 @@ def get_acts():
         find_activity("market_circ_memory_no_waf", "GLO", custom_db=OS_database),
         find_activity("market group for electricity, medium voltage", "GLO")
     )
-
-def chip_smart_activity(activity, param_name, db):
-    data = activity["data"]
-
-    die_area = data.get("die", {}).get("area", None)
-    pack_weight = data.get("package", {}).get("weight", None)
-    pack_area = get_param(f"{param_name}_pack_area", data.get("package", {}).get("area", None))
-    tech_n = data.get("die",{}).get("technology")
-
-    if die_area != None:
-        die_area = get_param(f"{param_name}_die_area", die_area)
-    else:
-        die_area = die_area_pred(data["package"], pack_area, param_name)
-
-    if pack_weight != None:
-        pack_weight = get_param(f"{param_name}_pack_weight", pack_weight)
-    else:
-        pack_weight = pack_weight_pred(data, die_area)
-
-    waffer_elec = waf_elec(data, die_area)
-
-    n_chips = data.get("amount", 1)
-
+    
+def get_used_acts(data):
+    ind_type = 2 if data["type"] == "memory" else 1
     acts = get_acts()
-
-    if "type" in data:
-        ind_type= 2 if data["type"] == "memory" else 1
+    if eia.use_imec_net_zero:# and data.get("d_tech") in tech_n_avail:
+        act = get_die_act(data.get("d_tech"), data["d_area"], eia)
+        return [
+            (act, "tot_wafer_per_d"),
+            (acts[ind_type], "tot_p_weight"),
+        ]
     else:
-        logging.warning(f"Chip type not explictely given for {param_name}, defaulting to logic")
-        ind_type = 1
 
-    a2 = (acts[ind_type], pack_weight*n_chips)
+        return [
+            (acts[0], "tot_d_area"),
+            (acts[ind_type], "tot_p_weight"),
+            (acts[3], "tot_d_elec"),
+        ]
 
-    if eia.use_imec_net_zero:# and tech_n in tech_n_avail:
-        act = get_die_act(tech_n, die_area, eia)
-
-        # Die per Wafer = (pi * R² - F_corr * 2 * pi *R * L_D)/A_D
-        # We actually want Wafer per die 
-        # we do the inverse in the return with the division
-
-        side_kerf = die_area**0.5 + agb.unit_registry.Quantity(60, "μm")
-        die_area = side_kerf**2
-
-        R = agb.unit_registry.Quantity(150, "mm")
-        R -= agb.unit_registry.Quantity(3, "mm") #  wafer edge exclusion of 3mm
-        de_vries = np.pi * R**2  #pi * R²
-
-        # Supposing L_D = sqrt(R) and F_corr = 0.51
-        # F_corr * 2 * pi *R * L_D
-        de_vries -= 0.51 * 2 * np.pi * R * side_kerf
-        agb.unit_registry.define("Wafer = []")
-
-        return [(act, die_area/de_vries * agb.unit_registry("Wafer")), a2]
-    else:
-        a1 = (acts[0], die_area*n_chips)
-        a3 = (acts[3], waffer_elec*n_chips)
-
-        return [a1, a2, a3]
+chip_model = {
+    "variables" : variables,
+    "fetch_map" : fetch_map,
+    "relations" : relations,
+    "defaults"  : defaults,
+    "get_acts"  : get_used_acts,
+}
