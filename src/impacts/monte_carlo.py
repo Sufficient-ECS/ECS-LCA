@@ -41,4 +41,5 @@ def stoch_impacts(ref_flow, impacts, n=2**4):
     total_ref_flow = agb.newActivity(OS_database,f"act_fg_stoch",  "unit", exchanges={x: 1 for x in ref_flow[0]})
 
     problem, params, Y = agb.stats._stochastics(total_ref_flow, impacts, n)#**unused
+    total_ref_flow.delete()
     return Y
