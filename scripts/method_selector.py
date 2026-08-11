@@ -11,7 +11,7 @@ from src.utils.utils import load_tuple_file, save_tuple_set
 class MenuApp:
     def __init__(self, mfile):
 
-        setup_project_ei("ECS-LCA")
+        setup_project_ei("ECS-LCA-1")
         rows = list(bd.methods)
 
         self.mfile = Path(mfile)
