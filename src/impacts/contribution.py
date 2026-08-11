@@ -2,9 +2,7 @@ import lca_algebraic as agb
 import pandas as pd
 
 def compute_impacts(ref_flow, impacts):
-    dfs = [agb.compute_impacts(act, impacts, functional_unit=1) for act in ref_flow[0]]
-
-    df_impacts_axis = pd.concat(dfs)
+    df_impacts_axis = agb.compute_impacts(ref_flow[0], impacts)
 
     new_cols = pd.DataFrame.from_dict(ref_flow[1], orient="index")
 
