@@ -52,3 +52,6 @@ def get_reference_flow(path):
 
     return exchanges_foreground, rep
 
+def clean_reference_flow(ref_flow):
+    for act in ref_flow[0]:
+        act.delete()
