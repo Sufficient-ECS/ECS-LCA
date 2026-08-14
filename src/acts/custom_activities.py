@@ -98,9 +98,15 @@ def add_all_exchanges(all_acts, db_store, db_find):
 def update_all_exchanges(all_acts, db_store):
     for act, update_data in all_acts:
         exchanges = {}
+        to_del_exchage = []
         for key, data in update_data.items():
             param_name = f"{act['name']}_{key}"
             param = get_param(param_name, data["amount"], db_store)
+
+            if param == 0:
+                to_del_exchage.append(data['ex_name'])
+                continue
+
             #Need to do the get in case where multiple inputs link to the same activity
             try:
                 if "location" in data:
@@ -111,6 +117,8 @@ def update_all_exchanges(all_acts, db_store):
                 raise ValueError(f"Error occurred while updating exchange for activity {act}: {e}")
 
         act.updateExchanges(exchanges)
+        for ex in to_del_exchage:
+            act.deleteExchanges(name=ex)
 
 def generate_activities(path, db_store, db_find):
 
