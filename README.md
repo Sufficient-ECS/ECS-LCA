@@ -18,7 +18,7 @@ It also allows you to change the version or model of the database.
 
 ## uv
 ```
-uv venv --python 3.10
+uv venv --python 3.12
 uv pip install -r requirements.txt
 ./scripts/manage_database.py
 uv run python -m ipykernel install --user --name=ECS-LCA
@@ -27,7 +27,7 @@ uv run jupyter notebook main.ipynb
 
 ## conda
 ```
-conda create -n ECS-LCA python=3.10
+conda create -n ECS-LCA python=3.12
 conda activate ECS-LCA
 conda install --yes --file requirements.txt
 pip install -r requirements.txt
@@ -36,7 +36,7 @@ python -m jupyterlab main.ipynb
 ```
 ## pipenv
 ```
-pipenv install -r requirements.txt --python 3.10
+pipenv install -r requirements.txt --python 3.12
 pipenv run python -m ipykernel install --user --name=ECS-LCA
 pipenv run python -m ./scripts/manage_database.py
 pipenv run jupyter notebook main.ipynb

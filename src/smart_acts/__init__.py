@@ -27,7 +27,7 @@ def smart_activity(activity, param_name, db_store):
     return result
 
 def fetch_vars(data, varis, fm, defaults, param_name, db_store):
-    ret = {var : (np.infty, None) for var in varis}
+    ret = {var : (np.inf, None) for var in varis}
 
     for var in defaults:
         ret[var] = (451e67, defaults[var])

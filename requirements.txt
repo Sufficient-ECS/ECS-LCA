@@ -8,3 +8,4 @@ urwid
 msal
 premise
 bw_timex
+numpy=2.5.2
