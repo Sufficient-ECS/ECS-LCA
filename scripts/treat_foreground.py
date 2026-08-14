@@ -32,11 +32,12 @@ ei_acc = EI_Access()
 )
 @click.option("-o", "--output_folder", default="./results", help="Output folder for results")
 @click.option("-m", "--method_file", default="./results/method_list.txt", help="File of impact methods used")
-@click.option("-s", "--scenario_file", default=None, help="File of premise scenarios used")
+@click.option("-p", "--premise_scenario_file", default=None, help="File of premise scenarios used for static LCA")
+@click.option("-t", "--timex_scenario_file", default=None, help="File of premise scenarios used for Timex")
 @click.option("-i", "--index", default=1, help="Project index")
 @click.option("-e", "--existing", default=False, help="If present, only treat elements without an existing result")
 @click.option("-v", "--verbose", count=True, help="Increase verbosity (-v, -vv, -vvv)")
-def run_lca(input_files, cdb_path, output_folder, method_file, scenario_file, index, existing, verbose):
+def run_lca(input_files, cdb_path, output_folder, method_file, premise_scenario_file, timex_scenario_file, index, existing, verbose):
     """
     Run LCA impacts on one or multiple YAML foreground files.
     """
@@ -58,7 +59,7 @@ def run_lca(input_files, cdb_path, output_folder, method_file, scenario_file, in
 
     output_folder = Path(output_folder)
 
-    setup_project(cdb_path, f"ECS-LCA-{index}", scenario_file)
+    setup_project(cdb_path, f"ECS-LCA-{index}", [premise_scenario_file, timex_scenario_file])
 
     for filepath in tqdm(input_files, position=index):
         # Build output filenames
@@ -93,8 +94,8 @@ def run_lca(input_files, cdb_path, output_folder, method_file, scenario_file, in
         except Exception as e:
             click.echo(f"Could not run stochastic, likely because no random variable, {e}")
 
-        if scenario_file != None:
-            scenarios_tuple = load_tuple_file(scenario_file, sep=',')
+        if timex_scenario_file != None:
+            scenarios_tuple = load_tuple_file(timex_scenario_file, sep=',')
             name = (
                 f"ei_{ei_acc.system_model}_{ei_acc.version}_{scenarios_tuple[0][0]}_{scenarios_tuple[0][1]}"
             )
@@ -124,8 +125,8 @@ def run_lca(input_files, cdb_path, output_folder, method_file, scenario_file, in
 
             make_main_tech()
 
-        if scenario_file != None:
-            scenarios_tuple = load_tuple_file(scenario_file, sep=',')
+        if premise_scenario_file != None:
+            scenarios_tuple = load_tuple_file(premise_scenario_file, sep=',')
 
             filtered = []
             for sc in scenarios_tuple:

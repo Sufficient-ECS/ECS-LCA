@@ -25,13 +25,16 @@ FG_DB = f"{OS_database}_fg"
 
 ei_acc = EI_Access()
 
-def setup_project(custom_act_path, project_name, premise_file = None):
+def setup_project(custom_act_path, project_name, premise_file = []):
     """
     custom_act_path can be either a list of paths or a single path
     """
 
     if not isinstance(custom_act_path, Iterable) or isinstance(custom_act_path, (str, bytes)):
         custom_act_path = [custom_act_path]
+
+    if not isinstance(premise_file, Iterable) or isinstance(premise_file, (str, bytes)):
+        premise_file = [premise_file]
 
     setup_project_ei(project_name, premise_file)
 
@@ -44,7 +47,7 @@ def setup_project(custom_act_path, project_name, premise_file = None):
         export_all_db_as_enum("schemas/all_activities_enum.yaml")
 
 
-def setup_project_ei(project_name, premise_file = None):
+def setup_project_ei(project_name, premise_file = []):
     bd.projects.set_current(project_name) # Set the current project, can be any name
     logging.debug("Setup ecoinvent")
 
@@ -59,9 +62,10 @@ def setup_project_ei(project_name, premise_file = None):
     if ei_acc.use_imec_net_zero:
         init_imecnz_db(ei_acc)
 
-    if premise_file != None:
-        logging.debug(f"Setup premise with {premise_file}")
-        init_premise(ei_acc, premise_file)
+    for path in premise_file:
+        logging.debug(f"Setup premise with {path}")
+        if path != None:
+            init_premise(ei_acc, path)
 
 def _newPremise_Database(scenarios):
     scenarios = json.loads(scenarios)

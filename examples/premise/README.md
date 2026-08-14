@@ -3,7 +3,7 @@ This example repdouces [this graph](https://raw.githubusercontent.com/polca/prem
 
 Then, run
 ```
- ./scripts/treat_foreground.py ./examples/premise/foreground.yaml -s ./examples/premise/scenarios.txt -m ./examples/premise/methods.txt
+ ./scripts/treat_foreground.py ./examples/premise/foreground.yaml -p ./examples/premise/scenarios.txt -m ./examples/premise/methods.txt
 
  ./examples/premise/graph.py
 ```

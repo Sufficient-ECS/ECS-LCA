@@ -3,7 +3,7 @@ This example repdouces [this example](https://github.com/brightway-lca/bw_timex/
 Run
 ```
 ./scripts/treat_foreground.py      ./examples/bw_timex/foreground.yaml \
-                                -s ./examples/bw_timex/scenarios.txt \
+                                -t ./examples/bw_timex/scenarios.txt \
                                 -m ./examples/bw_timex/method_list.txt \
                                 -c ./examples/bw_timex/custom
 
