@@ -34,8 +34,9 @@ ei_acc = EI_Access()
 @click.option("-m", "--method_file", default="./results/method_list.txt", help="File of impact methods used")
 @click.option("-s", "--scenario_file", default=None, help="File of premise scenarios used")
 @click.option("-i", "--index", default=1, help="Project index")
+@click.option("-e", "--existing", default=False, help="If present, only treat elements without an existing result")
 @click.option("-v", "--verbose", count=True, help="Increase verbosity (-v, -vv, -vvv)")
-def run_lca(input_files, cdb_path, output_folder, method_file, scenario_file, index, verbose):
+def run_lca(input_files, cdb_path, output_folder, method_file, scenario_file, index, existing, verbose):
     """
     Run LCA impacts on one or multiple YAML foreground files.
     """
@@ -66,16 +67,16 @@ def run_lca(input_files, cdb_path, output_folder, method_file, scenario_file, in
         stoch_path = output_folder / f"{base_name}_stochastic.csv"
 
         lock_path = impacts_path.with_suffix(".lock")
+        if existing:
+            # Already completed
+            if impacts_path.exists():
+                continue
 
-        # Already completed
-        if impacts_path.exists():
-            continue
-
-        # Atomically claim this input
-        try:
-            lock_path.touch(exist_ok=False)
-        except FileExistsError:
-            continue
+            # Atomically claim this input
+            try:
+                lock_path.touch(exist_ok=False)
+            except FileExistsError:
+                continue
 
         # Get reference flow
         reference_flow = get_reference_flow(filepath)
@@ -154,7 +155,8 @@ def run_lca(input_files, cdb_path, output_folder, method_file, scenario_file, in
             make_main_tech()
         clean_reference_flow(reference_flow)
         agb.params.resetParams(FG_DB)
-        lock_path.unlink(missing_ok=True)
+        if existing:
+            lock_path.unlink(missing_ok=True)
 
 if __name__ == "__main__":
     run_lca()
