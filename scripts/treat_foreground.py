@@ -35,7 +35,7 @@ ei_acc = EI_Access()
 @click.option("-p", "--premise_scenario_file", default=None, help="File of premise scenarios used for static LCA")
 @click.option("-t", "--timex_scenario_file", default=None, help="File of premise scenarios used for Timex")
 @click.option("-i", "--index", default=1, help="Project index")
-@click.option("-e", "--existing", default=False, help="If present, only treat elements without an existing result")
+@click.option("-e", "--existing", is_flag=True, help="If present, only treat elements without an existing result")
 @click.option("-v", "--verbose", count=True, help="Increase verbosity (-v, -vv, -vvv)")
 def run_lca(input_files, cdb_path, output_folder, method_file, premise_scenario_file, timex_scenario_file, index, existing, verbose):
     """
