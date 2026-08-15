@@ -53,7 +53,7 @@ done
 
 for ((i=0; i<nproc; i++)); do
 
-    ./scripts/treat_foreground.py "${treat_args[@]}" &
+    ./scripts/treat_foreground.py "${treat_args[@]}" -e &
     sleep 2 # avoid synchronization which leads to lag spike
 
 done
