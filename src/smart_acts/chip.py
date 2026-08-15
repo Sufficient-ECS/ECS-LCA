@@ -117,7 +117,7 @@ def pack_weight_pred(varis, param_name):
     }
 
     if varis["p_type"] not in param_pack_weight:
-        raise ValueError(f"Package type {varis["p_type"]} not supported")
+        raise ValueError(f"Package type {varis['p_type']} not supported")
 
     a_t_w = param_pack_weight[varis["p_type"]] * agb.unit_registry("mg/mm²")
     return varis["p_area"] * a_t_w
