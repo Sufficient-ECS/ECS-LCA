@@ -79,8 +79,8 @@ def write_config(data):
 def reset_brightway_project():
     click.echo("\n🔄 Resetting Brightway project...")
 
-    if "ECS-LCA" in bd.projects:
-        bd.projects.delete_project(name='ECS-LCA', delete_dir=True)
+    if "ECS-LCA-1" in bd.projects:
+        bd.projects.delete_project(name='ECS-LCA-1', delete_dir=True)
 
     OS_database = "OS database"
 
