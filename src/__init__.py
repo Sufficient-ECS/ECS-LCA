@@ -14,7 +14,7 @@ from premise_gwp import add_premise_gwp
 from src.ei_access import EI_Access
 from src.ei_access.setup import setup_ecoinvent_database
 from src.acts.custom_activities import generate_activities
-from src.utils.utils import export_all_db_as_enum, folder_changed, load_tuple_file
+from src.utils.utils import export_all_db_as_enum, load_tuple_file
 
 agb.Settings.units_enabled = True
 agb.unit_registry.auto_scale = True
@@ -43,8 +43,7 @@ def setup_project(custom_act_path, project_name, premise_file = []):
     for path in custom_act_path:
         generate_activities(path, BG_DB, BG_DB)
 
-    if folder_changed("yaml/custom", "results/.snapshot"):
-        export_all_db_as_enum("schemas/all_activities_enum.yaml")
+    export_all_db_as_enum("schemas/all_activities_enum.yaml")
 
 
 def setup_project_ei(project_name, premise_file = []):

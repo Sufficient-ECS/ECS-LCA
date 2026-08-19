@@ -2,7 +2,6 @@ import lca_algebraic as agb
 import bw2data as bd
 import yaml as yml
 import os
-import hashlib
 from functools import lru_cache
 import logging
 import re
@@ -141,48 +140,6 @@ def export_all_db_as_enum(path):
 
     with open(path, "w", encoding="utf-8") as f:
         yml.dump({"enum": all_names}, f, allow_unicode=True, sort_keys=False)
-
-import hashlib
-
-def folder_changed(folder: str, state_file: str) -> bool:
-    """
-    Return True if the folder has changed since last run.
-    Always updates the saved folder hash.
-    Only saves a single hash of the folder.
-    """
-    def hash_file(path: str) -> str:
-        """Compute SHA256 hash of a file."""
-        h = hashlib.sha256()
-        with open(path, "rb") as f:
-            while chunk := f.read(8192):
-                h.update(chunk)
-        return h.hexdigest()
-
-    # Build a deterministic combined hash of all files
-    hashes = []
-    for root, dirs, files in os.walk(folder):
-        for name in sorted(files):
-            path = os.path.join(root, name)
-            rel_path = os.path.relpath(path, folder)
-            file_hash = hash_file(path)
-            hashes.append(f"{rel_path}:{file_hash}")
-
-    # Combine all file hashes into a single folder hash
-    folder_hash = hashlib.sha256("\n".join(sorted(hashes)).encode()).hexdigest()
-
-    # Load previous hash
-    if os.path.exists(state_file):
-        with open(state_file, "r") as f:
-            prev_hash = f.read().strip()
-    else:
-        prev_hash = None
-
-    # Always update saved hash
-    os.makedirs(os.path.dirname(state_file) or ".", exist_ok=True)
-    with open(state_file, "w") as f:
-        f.write(folder_hash)
-
-    return prev_hash != folder_hash
 
 def unit_trans(base_unit, new_unit):
     return (1 *  agb.unit_registry(base_unit)).to(new_unit).magnitude
