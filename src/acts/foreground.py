@@ -8,7 +8,7 @@ from pathlib import Path
 import lca_algebraic as agb
 import yaml as yml
 
-from src import BG_DB, FG_DB
+from src import DB
 from src.acts.custom_activities import input_to_activity
 from src.utils.utils import act_name_sanit, parse_time
 
@@ -41,13 +41,13 @@ def process_fground(fground, name):
             td = parse_time(input_value["year"])
 
         try:
-            exchs = dict(input_to_activity(new_activity_name, input_value, FG_DB, BG_DB))
+            exchs = dict(input_to_activity(new_activity_name, input_value, DB, f"fg_{name}"))
             if td != None:
                 exchs = {
                     k: {"amount": v, "temporal_distribution": td}
                     for k, v in exchs.items()
                 }
-            act = agb.newActivity(FG_DB, 
+            act = agb.newActivity(DB, 
                                 new_activity_name,
                                 "unit",
                                 exchanges=exchs,

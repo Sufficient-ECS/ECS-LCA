@@ -10,14 +10,14 @@ import lca_algebraic as agb
 from tqdm import tqdm
 
 from scripts.method_selector import MenuApp
-from src import FG_DB, setup_project
+from src import DB, setup_project
 from src.acts.foreground import clean_reference_flow, get_reference_flow
 from src.ei_access import EI_Access
 from src.impacts.contribution import compute_impacts
 from src.impacts.monte_carlo import stoch_impacts
 from src.impacts.temporal import compute_temp_impacts
 from src.utils.db import make_main_tech
-from src.utils.utils import load_tuple_file, set_logging_level
+from src.utils.utils import load_tuple_file, set_logging_level, resetParamsGroup
 
 ei_acc = EI_Access()
 
@@ -155,7 +155,7 @@ def run_lca(input_files, cdb_path, output_folder, method_file, premise_scenario_
 
             make_main_tech()
         clean_reference_flow(reference_flow)
-        agb.params.resetParams(FG_DB)
+        resetParamsGroup(DB, f"fg_{base_name}")
         if existing:
             lock_path.unlink(missing_ok=True)
 

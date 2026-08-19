@@ -19,9 +19,7 @@ from src.utils.utils import export_all_db_as_enum, load_tuple_file
 agb.Settings.units_enabled = True
 agb.unit_registry.auto_scale = True
 
-OS_database = "OS_database"
-BG_DB = f"{OS_database}_bg"
-FG_DB = f"{OS_database}_fg"
+DB = "OS_database"
 
 ei_acc = EI_Access()
 
@@ -38,10 +36,10 @@ def setup_project(custom_act_path, project_name, premise_file = []):
 
     setup_project_ei(project_name, premise_file)
 
-    generate_activities(Path(__file__).resolve().parent/"smart_acts/yaml", BG_DB, BG_DB)
+    generate_activities(Path(__file__).resolve().parent/"smart_acts/yaml", DB, "bg")
 
     for path in custom_act_path:
-        generate_activities(path, BG_DB, BG_DB)
+        generate_activities(path, DB, "bg")
 
     export_all_db_as_enum("schemas/all_activities_enum.yaml")
 
@@ -52,11 +50,9 @@ def setup_project_ei(project_name, premise_file = []):
 
     setup_ecoinvent_database(ei_acc)
 
-    agb.resetDb(FG_DB)
-    agb.resetDb(BG_DB)
+    agb.resetDb(DB)
     agb.resetParams()
-    agb.setForeground(FG_DB)
-    agb.setBackground(BG_DB)
+    agb.setForeground(DB)
 
     if ei_acc.use_imec_net_zero:
         init_imecnz_db(ei_acc)

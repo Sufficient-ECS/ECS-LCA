@@ -95,7 +95,7 @@ def clean_param_name(name):
         }
     ))
 
-def get_param(name,amount, db):
+def get_param(name,amount, db, param_group = None):
     """
         Returns the parameter for the given amount
         amount MUST have a value and a unit field
@@ -128,6 +128,7 @@ def get_param(name,amount, db):
                 distrib=getattr(agb.DistributionType, distrib, None),
                 save=False,
                 dbname=db,
+                group = param_group,
             )
         else:
             raise ValueError(f"Unsupported parameter type: {param_type}")
@@ -220,3 +221,13 @@ def parse_time(tv):
         td = TemporalDistribution(date=dates, amount=amounts)
 
     return td
+    
+def resetParamsGroup(db_name, group):
+    for param_name, db_params in list(agb.params._param_registry().params.items()):
+        if db_name in db_params and db_params[db_name].group == group:
+            del db_params[db_name]
+        
+        if not db_params:
+            del agb.params._param_registry().params[param_name]
+
+    agb.params.ActivityParameter.delete().where(agb.params.ActivityParameter.group == group).execute()

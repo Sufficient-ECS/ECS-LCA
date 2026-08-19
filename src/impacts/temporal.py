@@ -7,23 +7,21 @@ import numpy as np
 import pandas as pd
 from bw_timex.utils import plot_characterized_inventory_as_waterfall
 
-from src import FG_DB, BG_DB
+from src import DB
 from src.ei_access import EI_Access
 
 ei_acc = EI_Access()
 
 def compute_temp_impacts(ref_flow, impacts, year_to_db, methods):
 
-    agb.freezeParams(FG_DB)
-    agb.freezeParams(BG_DB)
+    agb.freezeParams(DB)
 
     time_dfs = []
     metrics_dfs = []
 
     exchs = {}
 
-    year_to_db[FG_DB] = "dynamic"
-    year_to_db[BG_DB] = "dynamic"
+    year_to_db[DB] = "dynamic"
     if ei_acc.use_imec_net_zero:
         year_to_db["exchange_mapping_database"] = 'dynamic'
     for meth in methods:

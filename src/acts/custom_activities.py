@@ -23,16 +23,16 @@ def load_custom_activities(yaml_path):
 
     return activities
 
-def input_to_activity(param_name, input_value, db_store, db_find):
+def input_to_activity(param_name, input_value, db, param_group):
     if input_value is None:
         raise ValueError(f"Input '{param_name}' has no value defined in YAML (parsed as None). Check for a missing or malformed entry.")
     if "type" in input_value:
-        return smart_activity(input_value, param_name, db_store)
+        return smart_activity(input_value, param_name, db, param_group)
 
     if "composition" in input_value:
-        return composite_activity(param_name, input_value, db_store, db_find)
+        return composite_activity(param_name, input_value, db, param_group)
     
-    param = get_param(param_name, input_value["amount"], db_store)
+    param = get_param(param_name, input_value["amount"], db, param_group)
 
     ef_cat = input_value.get("ef_cat", None)
 
@@ -58,9 +58,9 @@ def input_to_activity(param_name, input_value, db_store, db_find):
             "temporal_distribution" : td
         }
 
-    return [(find_activity(ei_name, location, ref_prod, ef_cat, db_find), param) for ei_name in ei_names]
+    return [(find_activity(ei_name, location, ref_prod, ef_cat, db), param) for ei_name in ei_names]
 
-def create_custom_activities(activities, db_store, db_find):
+def create_custom_activities(activities, db):
     inputs, updates = [],[]
     for activity in activities:
         if "source_act" in activity:
@@ -68,15 +68,15 @@ def create_custom_activities(activities, db_store, db_find):
                 activity["source_act"]["act_name"],
                 activity["source_act"].get("location", "GLO"),
                 activity["source_act"].get("ref_prod", None),
-                custom_db=db_find
+                custom_db=db,
             )
-            act = agb.activity.copyActivity(db_store, to_copy, code= activity['id'])
+            act = agb.activity.copyActivity(db, to_copy, code= activity['id'])
             logging.debug(f"Modified activity {activity['source_act']['act_name']} at {activity['source_act']['location']}\
  copied with code {activity['id']}")
         else:
             # Create new custom activity
             act = agb.newActivity(
-                db_store,
+                db,
                 activity['id'],
                 amount= activity["output"]["amount"]["value"],
                 unit = activity["output"]["amount"]["unit"],
@@ -87,7 +87,7 @@ def create_custom_activities(activities, db_store, db_find):
         updates.append((act,activity.get("to_update", {})))
     return inputs, updates
 
-def add_all_exchanges(all_acts, db_store, db_find):
+def add_all_exchanges(all_acts, db, param_group):
 
     for act, input_data in all_acts:
         for input_name, input_value in input_data.items():
@@ -96,16 +96,16 @@ def add_all_exchanges(all_acts, db_store, db_find):
                 raise ValueError(f"Input '{input_name}' in activity '{act['name']}' is None — check your YAML for a missing definition.")
 
             logging.debug(f"Treating {param_name}")
-            for child_act, param in input_to_activity(param_name, input_value, db_store, db_find):
+            for child_act, param in input_to_activity(param_name, input_value, db, param_group):
                 act.addExchanges({child_act : param})
 
-def update_all_exchanges(all_acts, db_store):
+def update_all_exchanges(all_acts, db, param_group):
     for act, update_data in all_acts:
         exchanges = {}
         to_del_exchage = []
         for key, data in update_data.items():
             param_name = f"{act['name']}_{key}"
-            param = get_param(param_name, data["amount"], db_store)
+            param = get_param(param_name, data["amount"], db, param_group)
 
             if param == 0:
                 to_del_exchage.append(data['ex_name'])
@@ -124,16 +124,16 @@ def update_all_exchanges(all_acts, db_store):
         for ex in to_del_exchage:
             act.deleteExchanges(name=ex)
 
-def generate_activities(path, db_store, db_find):
+def generate_activities(path, db, param_group):
 
     logging.debug(f"Loading custom activities from {path} in memory")
     custom_activities = load_custom_activities(path)
 
     logging.debug("Create custom activities")
-    inputs, updates = create_custom_activities(custom_activities, db_store, db_find)
+    inputs, updates = create_custom_activities(custom_activities, db)
 
     logging.debug("Adding exchange to all activities")
-    add_all_exchanges(inputs, db_store, db_find)
+    add_all_exchanges(inputs, db, param_group)
 
     logging.debug("Updating all echances for modified activities")
-    update_all_exchanges(updates, db_store)
+    update_all_exchanges(updates, db, param_group)
