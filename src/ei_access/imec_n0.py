@@ -17,8 +17,6 @@ import time
 import yaml
 import lca_algebraic as agb
 
-tech_n_avail = []
-
 CACHE_DIR = Path(".cache/")
 _cache = {"key": None, "exp": 0}
 _file = CACHE_DIR / "api_key.yaml"
@@ -60,10 +58,11 @@ def create_api_key(eia):
     response = app.acquire_token_for_client(scopes=[API_SCOPE])
     return response.get("access_token"), time.time() + response.get("expires_in")
 
-def send_request(request, params, eia):
+def send_request(request, params, eia, kind = "post"):
     API_BASE_URL = eia.api_base_url  # Production API URL
  
-    response = requests.post(
+    response = requests.request(
+        kind,
         f"{API_BASE_URL}{request}",
         headers={"Authorization": f"Bearer {get_api_key(eia)}"},
         json=params
@@ -120,6 +119,12 @@ def get_die_data(technology, eia):
 
     return response
 
+@lru_cache(maxsize=1)
+def get_imec_node_list(eia):
+    response = send_request("/die/settings/die", None, eia, "get")
+    data = json.loads(response.decode())["tech_nodes"]["values"]
+    data = [x["value"] for x in data]
+    return data
 
 def get_die_act(technology, area, eia):
     return get_die_act_tech(technology, eia)

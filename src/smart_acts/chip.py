@@ -5,7 +5,7 @@ import lca_algebraic as agb
 import numpy as np
 
 from src.ei_access import EI_Access
-from src.ei_access.imec_n0 import get_die_act, tech_n_avail
+from src.ei_access.imec_n0 import get_die_act, get_imec_node_list
 from src.utils.utils import clean_param_name, find_activity
 
 eia = EI_Access()
@@ -202,7 +202,7 @@ def get_acts():
 def get_used_acts(data):
     ind_type = 2 if data["type"] == "memory" else 1
     acts = get_acts()
-    if eia.use_imec_net_zero:# and data.get("d_tech") in tech_n_avail:
+    if eia.use_imec_net_zero and data.get("d_tech") in get_imec_node_list(eia):
         act = get_die_act(data.get("d_tech"), data["d_area"], eia)
         return [
             (act, "tot_wafer_per_d"),
