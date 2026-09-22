@@ -1,13 +1,15 @@
 #!/usr/bin/env -S PYTHONPATH=${PWD} uv run 
 
-import click
-from ecs_lca import setup_project_ei
-from ecs_lca.utils.utils import find_activity
-from pathlib import Path
-import pandas as pd
 import logging
-import bw2data as bd
+from pathlib import Path
+
+import click
+import pandas as pd
 import yaml
+
+from ecs_lca import setup_project_ei
+from ecs_lca.utils.utils import find_activity, set_logging_level
+
 
 def treat_act(index, act_name, loc):
     if filename_exists("./yaml/custom", act_name):
@@ -67,16 +69,9 @@ def treat_csv(file_path, act_name_col, loc_col):
 @click.option("-v", "--verbose", count=True, help="Increase verbosity (-v, -vv, -vvv)")
 def main(input_file, act_name, loc, verbose):
 
-    level = logging.WARNING  # default
-    if verbose == 1:
-        level = logging.INFO
-    elif verbose >= 2:
-        level = logging.DEBUG
+    set_logging_level(verbose)
 
-    logging.basicConfig(level=level)
-    logging.getLogger("peewee").setLevel(logging.WARNING)  # or INFO if you prefer
-
-    setup_project_ei("ECS-LCA")
+    setup_project_ei("ECS-LCA-1")
 
     # input file should be either
     # file .csv
@@ -87,13 +82,13 @@ def main(input_file, act_name, loc, verbose):
     logging.debug(f"Input: {file}")
 
     if file.is_dir():
-        logging.debug(f"Treating the folder of yamls")
+        logging.debug("Treating the folder of yamls")
 
         for i in file.rglob("*.yaml"):
             logging.debug(f"Treating the yaml {i}")
             treat_yaml(i)
     elif file.suffix == ".yaml":
-        logging.debug(f"Treating the yaml")
+        logging.debug("Treating the yaml")
 
         treat_yaml(file)
     elif file.suffix == ".csv":
