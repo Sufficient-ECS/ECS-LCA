@@ -91,7 +91,7 @@ done
 
 for ((i=0; i<nproc; i++)); do
 
-    ./scripts/treat_foreground.py -i $i "${treat_args[@]}" -e &
+    uv run treat_foreground -i $i "${treat_args[@]}" -e &
     child_pids+=("$!")
 
     sleep 2 # avoid synchronization which leads to lag spike
