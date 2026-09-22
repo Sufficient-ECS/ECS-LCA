@@ -2,7 +2,7 @@ from functools import lru_cache
 
 import lca_algebraic as agb
 
-from src.utils.utils import find_activity
+from ecs_lca.utils.utils import find_activity
 
 variables = [
     "circ_conn_area",
@@ -62,7 +62,7 @@ relations = {
 
 @lru_cache(maxsize=1)
 def get_acts():
-    from src import DB
+    from ecs_lca import DB
     # import can't be moved to the start of the file because of circular import
     return (
         find_activity("market for copper, cathode", "GLO"),

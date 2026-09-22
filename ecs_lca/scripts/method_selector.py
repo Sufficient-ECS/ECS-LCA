@@ -5,8 +5,8 @@ import bw2data as bd
 import click
 import os
 from pathlib import Path
-from src import setup_project_ei
-from src.utils.utils import load_tuple_file, save_tuple_set
+from ecs_lca import setup_project_ei
+from ecs_lca.utils.utils import load_tuple_file, save_tuple_set
 
 class MenuApp:
     def __init__(self, mfile):

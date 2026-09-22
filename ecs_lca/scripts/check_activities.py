@@ -1,8 +1,8 @@
 #!/usr/bin/env -S PYTHONPATH=${PWD} uv run 
 
 import click
-from src import setup_project_ei
-from src.utils.utils import find_activity
+from ecs_lca import setup_project_ei
+from ecs_lca.utils.utils import find_activity
 from pathlib import Path
 import pandas as pd
 import logging

@@ -11,10 +11,10 @@ from premise import NewDatabase
 from premise.utils import eidb_label
 from premise_gwp import add_premise_gwp
 
-from src.ei_access import EI_Access
-from src.ei_access.setup import setup_ecoinvent_database
-from src.acts.custom_activities import generate_activities
-from src.utils.utils import export_all_db_as_enum, load_tuple_file
+from ecs_lca.ei_access import EI_Access
+from ecs_lca.ei_access.setup import setup_ecoinvent_database
+from ecs_lca.acts.custom_activities import generate_activities
+from ecs_lca.utils.utils import export_all_db_as_enum, load_tuple_file
 
 agb.Settings.units_enabled = True
 agb.unit_registry.auto_scale = True
@@ -121,12 +121,12 @@ def init_premise(ei_acc, premise_file):
 
 def init_imecnz_db(ei_acc):
 
-    if "exchange_mapping_database" in bd.databases.keys():
+    if "exchange_mapping_database_v7.1" in bd.databases.keys():
         return
 
     imp = bi.ExcelImporter(ei_acc.imec_custom_db_path)
     imp.apply_strategies()
-    imp.match_database('ecoinvent-3.11-cutoff', fields=('name', 'unit', 'location'))
+    imp.match_database('ecoinvent-3.11-cutoff', fields=('name', 'unit', 'location', 'reference product'))
     imp.statistics()
 
     logging.warning(list(imp.unlinked))

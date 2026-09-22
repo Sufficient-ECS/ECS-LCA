@@ -1,4 +1,4 @@
-from src.utils.utils import find_activity, get_param, unit_trans, get_location
+from ecs_lca.utils.utils import find_activity, get_param, unit_trans, get_location
 
 from maxent_disaggregation import sample_shares
 import lca_algebraic as agb

@@ -2,7 +2,7 @@
 
 import networkx as nx
 from pyvis.network import Network
-from src.acts.custom_activities import load_custom_activities
+from ecs_lca.acts.custom_activities import load_custom_activities
 
 all_data = load_custom_activities("./yaml/custom")
 custom_nodes = set()

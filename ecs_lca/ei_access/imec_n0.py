@@ -138,20 +138,20 @@ def get_die_act_tech(technology, eia):
         tmp_path = tmp.name
 
     imp = bi.ExcelImporter(tmp_path)
-    imp.db_name = "exchange_mapping_database"
-    imp.data[0]["database"] = "exchange_mapping_database"
+    imp.db_name = "exchange_mapping_database_v7.1"
+    imp.data[0]["database"] = "exchange_mapping_database_v7.1"
     act = imp.data[0]
 
     try:
         # If it exists, return it directly
-        return agb.findActivity(act["name"], loc="GLO", db_name = "exchange_mapping_database")
+        return agb.findActivity(act["name"], loc="GLO", db_name = "exchange_mapping_database_v7.1")
     except:
         # Otherwise import and return newly created activity
         imp.apply_strategies()
-        imp.match_database('exchange_mapping_database')
+        imp.match_database('exchange_mapping_database_v7.1')
 
         for exc in imp.unlinked:
             for k, v in exc.items():
                 logging.debug(f"imec net0: unlinked exchange: {k}: {v}")
         imp.write_database(delete_existing=False)
-        return agb.findActivity(act["name"], loc="GLO", db_name = "exchange_mapping_database")
+        return agb.findActivity(act["name"], loc="GLO", db_name = "exchange_mapping_database_v7.1")

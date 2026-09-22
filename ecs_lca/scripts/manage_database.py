@@ -5,7 +5,7 @@ import click
 import re
 import bw2data as bd
 
-CONFIG_FILE = "src/ei_access/__init__.py"
+CONFIG_FILE = "ecs_lca/ei_access/__init__.py"
 
 
 def config_exists():
@@ -84,7 +84,7 @@ def reset_brightway_project():
 
     OS_database = "OS database"
 
-    from src import setup_project
+    from ecs_lca import setup_project
     setup_project([], 'ECS-LCA-1')
 
     click.echo("✅ Project successfully rebuilt.\n")

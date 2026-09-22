@@ -1,6 +1,6 @@
-from src.acts.composite_activities import composite_activity
-from src.utils.utils import find_activity, get_param, act_name_sanit, get_location, parse_delta_time
-from src.smart_acts import smart_activity
+from ecs_lca.acts.composite_activities import composite_activity
+from ecs_lca.utils.utils import find_activity, get_param, act_name_sanit, get_location, parse_delta_time
+from ecs_lca.smart_acts import smart_activity
 
 from pathlib import Path
 import lca_algebraic as agb

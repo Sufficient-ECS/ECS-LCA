@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 from bw_timex.utils import plot_characterized_inventory_as_waterfall
 
-from src import DB
-from src.ei_access import EI_Access
+from ecs_lca import DB
+from ecs_lca.ei_access import EI_Access
 
 ei_acc = EI_Access()
 

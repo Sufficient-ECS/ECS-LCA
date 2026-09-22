@@ -9,15 +9,15 @@ import click
 import lca_algebraic as agb
 from tqdm import tqdm
 
-from scripts.method_selector import MenuApp
-from src import DB, setup_project
-from src.acts.foreground import clean_reference_flow, get_reference_flow
-from src.ei_access import EI_Access
-from src.impacts.contribution import compute_impacts
-from src.impacts.monte_carlo import stoch_impacts
-from src.impacts.temporal import compute_temp_impacts
-from src.utils.db import make_main_tech
-from src.utils.utils import load_tuple_file, set_logging_level, resetParamsGroup
+from ecs_lca.scripts.method_selector import MenuApp
+from ecs_lca import DB, setup_project
+from ecs_lca.acts.foreground import clean_reference_flow, get_reference_flow
+from ecs_lca.ei_access import EI_Access
+from ecs_lca.impacts.contribution import compute_impacts
+from ecs_lca.impacts.monte_carlo import stoch_impacts
+from ecs_lca.impacts.temporal import compute_temp_impacts
+from ecs_lca.utils.db import make_main_tech
+from ecs_lca.utils.utils import load_tuple_file, set_logging_level, resetParamsGroup
 
 ei_acc = EI_Access()
 
@@ -148,7 +148,7 @@ def run_lca(input_files, cdb_path, output_folder, method_file, premise_scenario_
                 df_impacts.to_csv(impacts_path)
 
                 try:
-                    df_stoch = stoch_impacts(reference_flow, meth, n = 2**8)
+                    df_stoch = stoch_impacts(reference_flow, meth, n = 2**12)
                     df_stoch.to_csv(stoch_path)
                 except Exception as e:
                     click.echo(f"Could not run stochastic, likely because no random variable, {e}")   

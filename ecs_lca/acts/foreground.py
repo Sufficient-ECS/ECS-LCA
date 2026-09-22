@@ -8,9 +8,9 @@ from pathlib import Path
 import lca_algebraic as agb
 import yaml as yml
 
-from src import DB
-from src.acts.custom_activities import input_to_activity
-from src.utils.utils import act_name_sanit, parse_time
+from ecs_lca import DB
+from ecs_lca.acts.custom_activities import input_to_activity
+from ecs_lca.utils.utils import act_name_sanit, parse_time
 
 def process_fground(fground, name):
     ret, rep = [], {}

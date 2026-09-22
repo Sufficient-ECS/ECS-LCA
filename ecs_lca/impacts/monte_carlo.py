@@ -1,6 +1,6 @@
 import lca_algebraic as agb
 import sympy as sp
-from src import DB
+from ecs_lca import DB
 
 def find_unused_params(root_act, db):
     visited = set()

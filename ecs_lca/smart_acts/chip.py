@@ -4,9 +4,9 @@ from functools import lru_cache
 import lca_algebraic as agb
 import numpy as np
 
-from src.ei_access import EI_Access
-from src.ei_access.imec_n0 import get_die_act, get_imec_node_list
-from src.utils.utils import clean_param_name, find_activity
+from ecs_lca.ei_access import EI_Access
+from ecs_lca.ei_access.imec_n0 import get_die_act, get_imec_node_list
+from ecs_lca.utils.utils import clean_param_name, find_activity
 
 eia = EI_Access()
 agb.unit_registry.define("Wafer = []")
@@ -190,7 +190,7 @@ relations = {
 
 @lru_cache(maxsize=1)
 def get_acts():
-    from src import DB
+    from ecs_lca import DB
     # import can't be moved to the start of the file because of circular import
     return (
         find_activity("mod_waf", "GLO", custom_db=DB),

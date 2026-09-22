@@ -18,7 +18,7 @@ import pandas as pd
 from polyviz.dataframe import find_downstream_emissions
 from polyviz.utils import check_filepath, identify_waste_process
 from packaging.version import Version
-from src.utils.utils import find_activity
+from ecs_lca.utils.utils import find_activity
 from typing import List, Optional
 
 
@@ -506,7 +506,7 @@ def main(act_name, act_location,act_db, method, db_highlighted, cutoff, level, f
     CLI to generate a Custom Supply Chain Sankey for a Brightway activity.
     """
     # 1. Setup Brightway Project
-    from src import setup_project
+    from ecs_lca import setup_project
     setup_project("yaml/custom", 'ECS-LCA')
 
     # 2. Retrieve the Activity

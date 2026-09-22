@@ -2,9 +2,9 @@ import logging
 
 import numpy as np
 
-from src.smart_acts.chip import chip_model
-from src.smart_acts.pcb import pcb_model
-from src.utils.utils import get_param
+from ecs_lca.smart_acts.chip import chip_model
+from ecs_lca.smart_acts.pcb import pcb_model
+from ecs_lca.utils.utils import get_param
 
 
 def smart_activity(activity, param_name, db, param_group):

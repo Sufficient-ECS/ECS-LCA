@@ -3,7 +3,7 @@ results
 Pipfile
 Pipfile.lock
 
-src/ei_access/__init__.py
+ecs_lca/ei_access/__init__.py
 
 uv.lock
 

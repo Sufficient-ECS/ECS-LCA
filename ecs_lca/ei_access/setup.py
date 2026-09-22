@@ -20,4 +20,4 @@ def setup_ecoinvent_database(eia):
                                         password = eia.password,
                                     ) 
             return
-    raise ValueError(f"Please fill EcoInvent database access mean in \src\ei_access\setup.py")
+    raise ValueError(f"Please fill EcoInvent database access mean in \ecs_lca\ei_access\setup.py")

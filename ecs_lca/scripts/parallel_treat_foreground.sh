@@ -85,7 +85,7 @@ setup_args_py="[${setup_args_py%,}]"
 
 for ((i=0; i<nproc; i++)); do
 
-    uv run python -c "from src import setup_project_ei; setup_project_ei('ECS-LCA-$i', $setup_args_py)"
+    uv run python -c "from ecs_lca import setup_project_ei; setup_project_ei('ECS-LCA-$i', $setup_args_py)"
 
 done
 
