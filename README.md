@@ -16,7 +16,6 @@ We recommand you to use [uv](https://github.com/astral-sh/uv). Other package man
 It also allows you to change the version or model of the database.
 
 ```
-uv venv --python 3.12
 uv sync
 uv run manage_database
 uv run python -m ipykernel install --user --name=ECS-LCA
