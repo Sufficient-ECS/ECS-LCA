@@ -1,25 +1,25 @@
 #!/usr/bin/env -S PYTHONPATH=${PWD} uv run 
 
-#README
-#
-
 import bw2calc
 import bw2data
+
 try:
     from bw2data.backends.peewee import Activity
 except ImportError:
     from bw2data.backends import Activity
-import click
-from d3blocks import D3Blocks
-from io import StringIO
 import json
-from pandas import DataFrame
+from io import StringIO
+
+import click
 import pandas as pd
+from d3blocks import D3Blocks
+from packaging.version import Version
+from pandas import DataFrame
 from polyviz.dataframe import find_downstream_emissions
 from polyviz.utils import check_filepath, identify_waste_process
-from packaging.version import Version
+
+from ecs_lca import DB
 from ecs_lca.utils.utils import find_activity
-from typing import List, Optional
 
 
 def ECS_LCA_CUSTOM_recursive_calculation(
@@ -199,7 +199,7 @@ def ECS_LCA_CUSTOM_calculate_supply_chain(
     return results, amount
 
 def ECS_LCA_CUSTOM_format_supply_chain_dataframe(
-    results: List[List], amount: int = 1, flow_type: str = None
+    results: list[list], amount: int = 1, flow_type: str = None
 ) -> pd.DataFrame:
     """
     ADAPTED FROM POLIVYZ, datatframe, format_supply_chain_dataframe
@@ -356,7 +356,7 @@ def ECS_LCA_CUSTOM_sankey(
     notebook: bool = False,
     labels_swap: dict = None,
     figsize: tuple = None,
-) -> Optional[tuple[str, DataFrame]]:
+) -> tuple[str, DataFrame] | None:
     """
     ADAPTED FROM POLIVYZ, sankey, sankey
 
@@ -490,7 +490,7 @@ class TupleParamType(click.ParamType):
 @click.command()
 @click.option("--act_name", required=True, help="Exact name of the activity")
 @click.option("--act_location", required=False, help="Location of the activity")
-@click.option("--act_db", required=True, help="Name of the Brightway database")
+@click.option("--act_db", default=DB, help="Name of the Brightway database")
 @click.option(
     "--method", 
     type=TupleParamType(), 
@@ -500,17 +500,24 @@ class TupleParamType(click.ParamType):
 @click.option("--cutoff", default=0.01, type=float, help="Contribution cutoff")
 @click.option("--level", default=3, type=int, help="Recursion level")
 @click.option("--figsize", default="(800, 600)", type=str, help="Figure size for the Sankey diagram (tuple in string format, e.g., '(1200,600)')")
-    
-def main(act_name, act_location,act_db, method, db_highlighted, cutoff, level, figsize):
+@click.option(
+    "-c",
+    "--cdb_path",
+    multiple=True,
+    type=click.Path(exists=True),
+    help="Custom database paths. Can be given multiple times.",
+)
+
+def main(act_name, act_location,act_db, method, db_highlighted, cutoff, level, figsize, cdb_path):
     """
     CLI to generate a Custom Supply Chain Sankey for a Brightway activity.
     """
     # 1. Setup Brightway Project
     from ecs_lca import setup_project
-    setup_project("yaml/custom", 'ECS-LCA')
+    setup_project(cdb_path, 'ECS-LCA-1')
 
     # 2. Retrieve the Activity
-    activity = find_activity(act_name, act_location, act_db)
+    activity = find_activity(act_name, act_location, custom_db = act_db)
     # 3. Parse inputs
     
     if figsize:
@@ -536,7 +543,7 @@ def main(act_name, act_location,act_db, method, db_highlighted, cutoff, level, f
     click.echo(f"Generating Sankey for: {act_name}...")
     ECS_LCA_CUSTOM_sankey(
         activity=activity,
-        db_to_highlight=highlight_dict if highlight_dict else None,
+        db_to_highlight=highlight_dict,
         method=method,
         level=level,
         cutoff=cutoff,
