@@ -102,13 +102,34 @@ def main():
     if existing:
         click.echo("Existing configuration found.\n")
 
-        change = click.prompt(
-            "What do you want to change?",
-            type=click.Choice(
-                ["all", "credentials", "database_path", "version", "model", "imec", "premise", "nothing"]
-            ),
-            default="all",
+        # 1. Définir les descriptions d'aide pour chaque option
+        help_text = (
+            "\nAvailable choices description:\n"
+            "  all           - Update every single configuration setting\n"
+            "  credentials   - ecoinvent: Update API keys, usernames, or password\n"
+            "  database_path - ecoinvent: Change the path for a local database\n"
+            "  version       - ecoinvent: Change version (e.g. 3.12)\n"
+            "  model         - ecoinvent: Change model (e.g. cutoff)\n"
+            "  imec          - imec.netzero: set credentials and URLs\n"
+            "  premise       - premise: Add decryption key\n"
+            "  nothing       - Exit without making any changes\n"
         )
+
+        # 2. Boucler pour permettre d'afficher l'aide sans quitter l'invite
+        while True:
+            change = click.prompt(
+                "What do you want to change? (type 'help' for details)",
+                type=click.Choice(
+                    ["all", "credentials", "database_path", "version", "model", "imec", "premise", "nothing", "help"]
+                ),
+                default="help",
+            )
+
+            if change != "help":
+                break
+            
+            click.echo(help_text)
+
 
         if change == "nothing":
             click.echo("No changes made.")
