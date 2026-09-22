@@ -10,7 +10,7 @@ from ecs_lca.utils.utils import load_tuple_file, save_tuple_set
 
 class MenuApp:
     def __init__(self, mfile):
-        with open(VARIABLES_DIR/"constants.yaml", "r") as f:
+        with open(VARIABLES_DIR/"constants.yaml", "r", encoding="utf-8") as f:
             premise_constants = yaml.safe_load(f)
 
         self.models = premise_constants["SUPPORTED_MODELS"]

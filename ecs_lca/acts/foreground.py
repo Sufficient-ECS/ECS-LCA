@@ -61,7 +61,7 @@ def process_fground(fground, name):
 
 def get_reference_flow(path):
 
-    with open(path, "r") as f:
+    with open(path, "r", encoding="utf-8") as f:
         fground = yml.safe_load(f)
 
     exchanges_foreground, rep = process_fground(fground, Path(path).stem)

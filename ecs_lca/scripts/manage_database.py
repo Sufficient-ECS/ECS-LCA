@@ -16,7 +16,7 @@ def read_existing_config():
     if not config_exists():
         return {}
 
-    with open(CONFIG_FILE, "r") as f:
+    with open(CONFIG_FILE, "r", encoding="utf-8") as f:
         content = f.read()
 
     def extract(field):
@@ -72,7 +72,7 @@ def write_config(data):
         self.api_base_url = "{data.get("api_base_url")}"
 '''
 
-    with open(CONFIG_FILE, "w") as f:
+    with open(CONFIG_FILE, "w", encoding="utf-8") as f:
         f.write(content)
 
 

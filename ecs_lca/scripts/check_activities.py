@@ -44,7 +44,7 @@ def treat_input(dic):
             treat_act(i, inp["act_name"], inp.get("location", None))
 
 def treat_yaml(file_path):
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
         if "inputs" in data: # modified activity or custom

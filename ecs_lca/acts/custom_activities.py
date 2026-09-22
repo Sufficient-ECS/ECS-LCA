@@ -14,7 +14,7 @@ def load_custom_activities(yaml_path):
 
     for file in Path(yaml_path).rglob("*.yaml"):
         logging.debug(f"Loading {file}")
-        with open(file, "r") as f:
+        with open(file, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
             if data == None:
                 continue
