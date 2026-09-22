@@ -7,7 +7,7 @@ import click
 import pandas as pd
 import yaml
 
-from ecs_lca import setup_project_ei
+from ecs_lca import setup_project
 from ecs_lca.utils.utils import find_activity, set_logging_level
 
 
@@ -66,12 +66,19 @@ def treat_csv(file_path, act_name_col, loc_col):
 @click.argument("input_file", default="./yaml", type=click.Path(exists=True))
 @click.option("--act_name", required=False, help="If CSV, column for activity name")
 @click.option("--loc", required=False, help="Column for location")
+@click.option(
+    "-c",
+    "--cdb_path",
+    multiple=True,
+    type=click.Path(exists=True),
+    help="Custom database paths. Can be given multiple times.",
+)
 @click.option("-v", "--verbose", count=True, help="Increase verbosity (-v, -vv, -vvv)")
-def main(input_file, act_name, loc, verbose):
+def main(input_file, act_name, loc, cdb_path, verbose):
 
     set_logging_level(verbose)
 
-    setup_project_ei("ECS-LCA-1")
+    setup_project(cdb_path, "ECS-LCA-1")
 
     # input file should be either
     # file .csv
