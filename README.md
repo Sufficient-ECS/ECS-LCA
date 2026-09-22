@@ -34,7 +34,7 @@ and then compute impacts, which will be found in files `./results/foreground_imp
 uv run treat_foreground ./examples/foreground.yaml -c ./examples/custom 
 ```
 
-Alternatively, `main.ipynb` provides an example of how to use the framework from your own python code.
+Alternatively, `./examples/main.ipynb` provides an example of how to use the framework from your own python code.
 
 # Contact
 - david.bol@uclouvain.be

@@ -41,7 +41,7 @@ def setup_project(custom_act_path, project_name, premise_file = []):
     for path in custom_act_path:
         generate_activities(path, DB, "bg")
 
-    export_all_db_as_enum("schemas/all_activities_enum.yaml")
+    export_all_db_as_enum(Path(__file__).resolve().parent/"../schemas/all_activities_enum.yaml")
 
 
 def setup_project_ei(project_name, premise_file = []):
