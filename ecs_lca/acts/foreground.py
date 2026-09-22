@@ -25,6 +25,8 @@ def process_fground(fground, name):
 
     for input_name, input_value in fground.items():
 
+        logging.debug(f"foreground: Treating {input_name}")
+
         new_activity_name = f"fg_{name}_{input_name}"
         new_activity_name = act_name_sanit(new_activity_name)
 

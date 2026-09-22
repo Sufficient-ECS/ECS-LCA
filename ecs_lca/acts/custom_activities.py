@@ -105,6 +105,8 @@ def update_all_exchanges(all_acts, db, param_group):
         to_del_exchage = []
         for key, data in update_data.items():
             param_name = f"{act['name']}_{key}"
+            logging.debug(f"Treating {param_name}")
+
             param = get_param(param_name, data["amount"], db, param_group)
 
             if param == 0:
