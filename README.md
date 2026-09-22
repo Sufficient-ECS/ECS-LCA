@@ -1,6 +1,7 @@
 > [!WARNING]
 > Please be aware that this is still a work in progress.
 > Breaking changes are to be expected in the future.
+> If you encounter any issues, we would be gratefull for the feedback.
 # ECS-LCA
 ECS-LCA is a life-cycle assessment framework that uses LCA-algebraic and Brightway with human-readable syntax files.
 ![Figure representing the database and processing structure](./image/figure_notebook_structure.png)
