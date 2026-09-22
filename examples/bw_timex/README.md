@@ -4,6 +4,7 @@ Run
 ```
 uv run treat_foreground         ./examples/bw_timex/foreground.yaml \
                                 -t ./examples/bw_timex/scenarios_list.txt \
+                                -p ./examples/bw_timex/scenarios_list.txt \
                                 -m ./examples/bw_timex/method_list.txt \
                                 -c ./examples/bw_timex/custom
 
