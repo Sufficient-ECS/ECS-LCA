@@ -4,8 +4,9 @@ import os
 import click
 import re
 import bw2data as bd
+import yaml
 
-CONFIG_FILE = "ecs_lca/ei_access/__init__.py"
+CONFIG_FILE = ".cache/access.yaml"
 
 
 def config_exists():
@@ -17,63 +18,16 @@ def read_existing_config():
         return {}
 
     with open(CONFIG_FILE, "r", encoding="utf-8") as f:
-        content = f.read()
+        content = yaml.safe_load(f)
 
-    def extract(field):
-        match = re.search(rf"self\.{field}\s*=\s*(.*)", content)
-        if match:
-            value = match.group(1).strip()
-            return value.strip('"') if value != "None" else None
-        return None
-
-    return {
-        "version": extract("version"),
-        "system_model": extract("system_model"),
-        "path": extract("path"),
-        "username": extract("username"),
-        "password": extract("password"),
-        "premise_decryption_key": extract("premise_decryption_key"),
-        "api_id": extract("api_id"),
-        "client_id": extract("client_id"),
-        "client_secret": extract("client_secret"),
-        "use_imec_net_zero": extract("use_imec_net_zero"),
-        "imec_custom_db_path": extract("imec_custom_db_path"),
-        "tenant_id": extract("tenant_id"),
-        "api_base_url": extract("api_base_url"),
-    }
+    return content
 
 
 def write_config(data):
     os.makedirs(os.path.dirname(CONFIG_FILE), exist_ok=True)
 
-    content = f'''class EI_Access:
-    def __init__(self):
-
-        self.version = "{data.get("version")}"
-        self.system_model = "{data.get("system_model")}"
-
-        # Fill if you have a local database
-        self.path = "{data.get("path")}"
-
-        # Fill if you want to download the database
-        self.username = "{data.get("username")}"
-        self.password = "{data.get("password")}"
-
-        # Premise
-        self.premise_decryption_key = "{data.get("premise_decryption_key")}"
-
-        # Fill if you want access to imec_net_zero api
-        self.use_imec_net_zero = {data.get("use_imec_net_zero")}
-        self.api_id = "{data.get("api_id")}"
-        self.client_id = "{data.get("client_id")}"
-        self.client_secret = "{data.get("client_secret")}"
-        self.imec_custom_db_path = "{data.get("imec_custom_db_path")}"
-        self.tenant_id = "{data.get("tenant_id")}"
-        self.api_base_url = "{data.get("api_base_url")}"
-'''
-
     with open(CONFIG_FILE, "w", encoding="utf-8") as f:
-        f.write(content)
+        yaml.safe_dump(data, f)
 
 
 def reset_brightway_project():

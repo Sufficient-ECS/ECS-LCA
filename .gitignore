@@ -3,8 +3,6 @@ results
 Pipfile
 Pipfile.lock
 
-ecs_lca/ei_access/__init__.py
-
 uv.lock
 
 # Byte-compiled / optimized / DLL files

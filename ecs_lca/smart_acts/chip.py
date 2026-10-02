@@ -8,7 +8,6 @@ from ecs_lca.ei_access import EI_Access
 from ecs_lca.ei_access.imec_n0 import get_die_act, get_imec_node_list
 from ecs_lca.utils.utils import clean_param_name, find_activity
 
-eia = EI_Access()
 agb.unit_registry.define("Wafer = []")
 
 # List of variables:
@@ -202,6 +201,7 @@ def get_acts():
 def get_used_acts(data):
     ind_type = 2 if data["type"] == "memory" else 1
     acts = get_acts()
+    eia = EI_Access()
     if eia.use_imec_net_zero and data.get("d_tech") in get_imec_node_list(eia):
         act = get_die_act(data.get("d_tech"), data["d_area"], eia)
         return [

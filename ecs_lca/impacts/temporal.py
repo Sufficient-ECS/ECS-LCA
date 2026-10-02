@@ -10,9 +10,9 @@ from bw_timex.utils import plot_characterized_inventory_as_waterfall
 from ecs_lca import DB
 from ecs_lca.ei_access import EI_Access
 
-ei_acc = EI_Access()
 
 def compute_temp_impacts(ref_flow, impacts, year_to_db, methods):
+    ei_acc = EI_Access()
 
     agb.freezeParams(DB)
 

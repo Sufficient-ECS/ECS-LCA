@@ -21,8 +21,6 @@ agb.unit_registry.auto_scale = True
 
 DB = "OS_database"
 
-ei_acc = EI_Access()
-
 def setup_project(custom_act_path, project_name, premise_file = []):
     """
     custom_act_path can be either a list of paths or a single path
@@ -48,6 +46,7 @@ def setup_project_ei(project_name, premise_file = []):
     bd.projects.set_current(project_name) # Set the current project, can be any name
     logging.debug("Setup ecoinvent")
 
+    ei_acc = EI_Access()
     setup_ecoinvent_database(ei_acc)
 
     agb.resetDb(DB)
@@ -62,7 +61,7 @@ def setup_project_ei(project_name, premise_file = []):
         if path != None:
             init_premise(ei_acc, path)
 
-def _newPremise_Database(scenarios):
+def _newPremise_Database(scenarios, ei_acc):
     scenarios = json.loads(scenarios)
     add_premise_gwp()
     ndb = NewDatabase(
@@ -116,7 +115,7 @@ def init_premise(ei_acc, premise_file):
     if len(scenarios) == 0:
         return
 
-    _newPremise_Database(json.dumps(scenarios, sort_keys=True))
+    _newPremise_Database(json.dumps(scenarios, sort_keys=True), ei_acc)
 
 
 def init_imecnz_db(ei_acc):

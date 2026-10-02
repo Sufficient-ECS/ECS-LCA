@@ -19,7 +19,6 @@ from ecs_lca.impacts.temporal import compute_temp_impacts
 from ecs_lca.utils.db import make_main_tech
 from ecs_lca.utils.utils import load_tuple_file, set_logging_level, resetParamsGroup
 
-ei_acc = EI_Access()
 
 @click.command()
 @click.argument("input_files", nargs=-1, type=click.Path(exists=True))
@@ -41,6 +40,8 @@ def run_lca(input_files, cdb_path, output_folder, method_file, premise_scenario_
     """
     Run LCA impacts on one or multiple YAML foreground files.
     """
+
+    ei_acc = EI_Access()
 
     if not os.path.isfile(method_file):
         MenuApp(method_file).run()
