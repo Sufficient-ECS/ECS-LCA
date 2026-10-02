@@ -13,6 +13,7 @@ dependencies = [
     "msal>=1.38.0",
     "polyviz>=1.0.4",
     "premise==2.5.2",
+    "pypardiso>=0.4.7",
     "urwid>=4.1.3",
 ]
 
