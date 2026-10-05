@@ -1,12 +1,19 @@
 oneOf:
-  - type: number
+  - type: string
+    pattern: '^-?\d+/(0[0-9]|1[01]|[0-9])$'
+
   - type: array
     maxItems: 2
     items:
-      type: number
+      type: string
+      pattern: '^-?\d+/(0[0-9]|1[01]|[0-9])$'
+
   - type: array
     items:
       type: array
+      minItems: 2
       maxItems: 2
       items:
-        type: number
+        - type: string
+          pattern: '^-?\d+/(0[0-9]|1[01]|[0-9])$'
+        - type: number

@@ -8,21 +8,21 @@ output:
 
 inputs:
   glider:
-    t_delta: 0.25
+    t_delta: 0/3
     act_name: treatment of used glider, passenger car, shredding
     amount:
       value: -840
       unit: kg
 
   powertrain:
-    t_delta: 0.25
+    t_delta: 0/3
     act_name: treatment of used powertrain for electric passenger car, manual dismantling
     amount:
       value: -80
       unit: kg
 
   battery:
-    t_delta: 0.25
+    t_delta: 0/3
     act_name: market for used Li-ion battery
     amount:
       value: -280

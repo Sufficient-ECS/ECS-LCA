@@ -1,13 +1,18 @@
-import lca_algebraic as agb
-import bw2data as bd
-import yaml as yml
-import os
-from functools import lru_cache
+import ast
 import logging
 import re
-import ast
+from functools import cache
+
+import bw2data as bd
+import lca_algebraic as agb
 import numpy as np
-from bw_temporalis import TemporalDistribution, easy_timedelta_distribution, easy_datetime_distribution
+import yaml as yml
+from bw_temporalis import (
+    TemporalDistribution,
+    easy_datetime_distribution,
+    easy_timedelta_distribution,
+)
+
 
 def load_tuple_file(filename, sep="|"):
     """
@@ -27,7 +32,7 @@ def load_tuple_file(filename, sep="|"):
 
     return result
 
-@lru_cache(maxsize=None)
+@cache
 def find_activity(activity_name, location, ref_prod = None, ef_cat = None, custom_db = None):
     if ef_cat != None:
         # Should be an elementary flow
@@ -67,9 +72,7 @@ def find_activity(activity_name, location, ref_prod = None, ef_cat = None, custo
 def get_param_type(value):
     if isinstance(value, bool):
         return "boolean"
-    elif isinstance(value, float):
-        return "float"
-    elif isinstance(value, int):
+    elif isinstance(value, float) or isinstance(value, int):
         return "float"
     elif isinstance(value, str):
         return "enum"
@@ -163,65 +166,108 @@ def save_tuple_set(data_set, filename, sep="|"):
     Saves a set of (str, str) tuples to a file, one per line.
     """
     with open(filename, "w", encoding="utf-8") as f:
-        for x in data_set:
-            f.write(f"{x}\n")
+        f.writelines(f"{x}\n" for x in data_set)
+
+def parse_year_month(value):
+    year, month = map(int, value.split("/"))
+    return year, month
+
+
+def year_month_delta_to_months(value):
+    """
+    Convert a relative year/month delta to months.
+
+    Examples:
+        "-2/0" -> -24
+        "0/0"  -> 0
+        "1/6"  -> 18
+    """
+    year, month = parse_year_month(value)
+    return year * 12 + month
+
+
+def year_month_to_datetime64(value):
+    """
+    Convert a human calendar YYYY/MM to datetime64.
+
+    Examples:
+        "2026/01" -> 2026-01-01
+        "2026/12" -> 2026-12-01
+    """
+    year, month = parse_year_month(value)
+
+    if not 1 <= month <= 12:
+        raise ValueError(f"Invalid calendar month: {month}")
+
+    return np.datetime64(f"{year:04d}-{month:02d}-01")
+
 
 def parse_delta_time(tv):
 
     if isinstance(tv, list) and isinstance(tv[0], list):
-        # list of (year delta, amount)
-        tv = np.array(tv).T
-        td = TemporalDistribution(date=np.round(tv[0]*12).astype("timedelta64[M]"), amount=tv[1])
+        # [(delta, amount), ...]
+        dates, amounts = zip(*tv)
 
-            
+        td = TemporalDistribution(
+            date=np.array(
+                [year_month_delta_to_months(t) for t in dates],
+                dtype="timedelta64[M]"
+            ),
+            amount=np.array(amounts),
+        )
+
     elif isinstance(tv, list):
-        # (year delta begin, year delta end)
+        # [start delta, end delta]
         td = easy_timedelta_distribution(
-            start=round(tv[0]*12),
-            end=round(tv[1]*12),
+            start=year_month_delta_to_months(tv[0]),
+            end=year_month_delta_to_months(tv[1]),
             resolution="M",
             kind="uniform",
         )
+
     else:
-        # year delta
-        td =TemporalDistribution(
-            date=np.array([round(tv * 12)], dtype="timedelta64[M]"), amount=np.array([1])
-            )
+        td = TemporalDistribution(
+            date=np.array(
+                [year_month_delta_to_months(tv)],
+                dtype="timedelta64[M]"
+            ),
+            amount=np.array([1.0]),
+        )
 
     return td
-
-
-def decimal_year_to_datetime64(y):
-    year = int(y)
-    fraction = y - year
-    
-    # Days in the year (account for leap years)
-    days = 366 if np.datetime64(f"{year}-12-31") - np.datetime64(f"{year}-01-01") == np.timedelta64(365, "D") else 365
-    
-    return np.datetime64(f"{year}-01-01") + np.timedelta64(int(fraction * days), "D")
-
 
 
 def parse_time(tv):
+
     if isinstance(tv, list) and isinstance(tv[0], list):
-        tv = np.array(tv).T
-        dates = np.array([decimal_year_to_datetime64(t) for t in tv[0]])
-        amounts = tv[1]
-        td = TemporalDistribution(date=dates, amount=amounts)
+        # [(date, amount), ...]
+        dates, amounts = zip(*tv)
+
+        td = TemporalDistribution(
+            date=np.array(
+                [year_month_to_datetime64(t) for t in dates]
+            ),
+            amount=np.array(amounts),
+        )
+
     elif isinstance(tv, list):
-        # (year delta begin, year delta end)
+        # [start date, end date]
         td = easy_datetime_distribution(
-            start=str(decimal_year_to_datetime64(tv[0])),
-            end=str(decimal_year_to_datetime64(tv[1])),
+            start=str(year_month_to_datetime64(tv[0])),
+            end=str(year_month_to_datetime64(tv[1])),
             kind="uniform",
         )
+
     else:
-        dates = np.array([decimal_year_to_datetime64(tv)])
-        amounts = np.array([1.0])
-        td = TemporalDistribution(date=dates, amount=amounts)
+        td = TemporalDistribution(
+            date=np.array(
+                [year_month_to_datetime64(tv)]
+            ),
+            amount=np.array([1.0]),
+        )
 
     return td
-    
+
 def resetParamsGroup(db_name, group):
     for param_name, db_params in list(agb.params._param_registry().params.items()):
         if db_name in db_params and db_params[db_name].group == group:
