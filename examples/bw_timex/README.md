@@ -1,4 +1,4 @@
-This example repdouces [this example](https://github.com/brightway-lca/bw_timex/blob/main/notebooks/examples/electric_vehicle_premise.ipynb) from bw_timex.
+This example repdouces [this example](https://github.com/brightway-lca/bw_timex/blob/d9653d82083889ce9749a0d5c1e05d93dadf41d1/notebooks/case_studies/electric_vehicle_premise.ipynb) from bw_timex.
 
 Run
 ```
